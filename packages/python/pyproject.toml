@@ -26,6 +26,11 @@ path = "src/agent_transcript_viewer/_version.py"
 
 [tool.hatch.build.targets.wheel]
 packages = ["src/agent_transcript_viewer"]
+# Unit tests are colocated with their source, so the build has to drop them.
+exclude = ["*_test.py", "conftest.py"]
+
+[tool.hatch.build.targets.sdist]
+exclude = ["*_test.py", "conftest.py"]
 
 [dependency-groups]
 dev = ["pytest>=8", "ruff>=0.8", "mypy>=1.13"]

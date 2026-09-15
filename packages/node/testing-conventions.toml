@@ -1,0 +1,4 @@
+[typescript]
+# npm runs `prepare`/`prepack` on `pack` but can't guess the build script's
+# name, so the packaging gate needs it stated to get a dist/ to scan.
+build_command = "pnpm build"
