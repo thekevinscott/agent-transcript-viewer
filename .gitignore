@@ -29,3 +29,7 @@ build/
 docs/.vitepress/cache
 docs/.vitepress/dist
 docs/node_modules/
+
+# Stryker scratch files, written by the mutation gate
+.stryker-tmp/
+stryker-setup-*.js
