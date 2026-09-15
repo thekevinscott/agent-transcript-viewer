@@ -13,8 +13,7 @@ name: Testing Conventions
 #
 # Per-language `path` because this is a monorepo: Python sources live under
 # packages/python, TypeScript under packages/node/src. The reusable workflow
-# scans a single root, so it is called once per language. (Rust uses inline
-# `#[cfg(test)]` tests, so the colocated-file rule does not apply.)
+# scans a single root, so it is called once per language.
 
 on:
   pull_request:
@@ -39,14 +38,3 @@ jobs:
     with:
       languages: '["typescript"]'
       source: packages/node/src
-      # Static gates only. The suite-executing gates (unit-coverage, mutation,
-      # packaging, e2e-verify) install with `pnpm install --frozen-lockfile`,
-      # which cannot succeed here before the first publish: the placeholder
-      # @mynewproduct/* optionalDependencies are unpublished, so pnpm cannot
-      # resolve them into the lockfile and every strict install fails on the
-      # specifier mismatch. putitoutthere requires those entries to stay in
-      # package.json (it pins them at the published version on release).
-      # After the first real release — or in a repo cloned from this template
-      # whose packages exist on npm — regenerate pnpm-lock.yaml and delete
-      # this `gates:` line to restore the full suite.
-      gates: '["colocated-test", "unit-lint", "integration-lint"]'

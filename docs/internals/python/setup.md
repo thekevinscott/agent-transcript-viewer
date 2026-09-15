@@ -15,8 +15,7 @@ requires-python = ">=3.12"
 - pytest + pytest-describe + pytest-asyncio for testing
 - ruff for lint + format
 - ty (or mypy / pyright) for type checking
-- hatchling + hatch-vcs for pure-Python build
-- maturin for PyO3-Rust build
+- hatchling + hatch-vcs for the build
 - just for task running
 - bandit for security scanning
 
@@ -28,7 +27,7 @@ requires-python = ">=3.12"
 uv run pytest-watcher .
 ```
 
-There's no monolithic watcher like Rust's `bacon`; compose your own from `pytest-watcher` (asyncio-aware) and a parallel `ty --watch` if you want type-check feedback in another pane.
+Compose your own watcher from `pytest-watcher` (asyncio-aware) and a parallel `ty --watch` if you want type-check feedback in another pane.
 
 ---
 
@@ -37,8 +36,8 @@ There's no monolithic watcher like Rust's `bacon`; compose your own from `pytest
 Flat layout:
 
 ```
-mynewproduct/
-  mynewproduct/
+agent_transcript_viewer/
+  agent_transcript_viewer/
     __init__.py
     core.py
     core_test.py             # colocated unit test
@@ -61,37 +60,24 @@ mynewproduct/
   LICENSE
 ```
 
-For PyO3 / maturin packages: Rust source in `src/`, Python source in `python/` (or wherever `tool.maturin.python-source` points), tests in `tests/`:
-
-```
-mynewproduct/
-  src/                       # Rust (PyO3) source
-    lib.rs
-  python/
-    mynewproduct/
-      __init__.py            # re-exports from compiled _mynewproduct
-  tests/
-  pyproject.toml             # build-backend = "maturin"
-```
-
 `__init__.py` should be **the thinnest possible** public-API surface. Re-export named items, set `__all__`, don't import heavy deps eagerly:
 
 ```python
-"""mynewproduct - one-line description."""
+"""agent_transcript_viewer - one-line description."""
 
-from mynewproduct.errors import MyNewProductError, ValidationError, NotFoundError
-from mynewproduct._version import __version__
+from agent_transcript_viewer.errors import AgentTranscriptViewerError, ValidationError, NotFoundError
+from agent_transcript_viewer._version import __version__
 
-__all__ = ["MyNewProductError", "ValidationError", "NotFoundError", "__version__"]
+__all__ = ["AgentTranscriptViewerError", "ValidationError", "NotFoundError", "__version__"]
 ```
 
-For libraries that ship optional heavy subsystems (numpy, torch, etc.), use **PEP 562 lazy imports** to keep `import mynewproduct` cheap:
+For libraries that ship optional heavy subsystems (numpy, torch, etc.), use **PEP 562 lazy imports** to keep `import agent_transcript_viewer` cheap:
 
 ```python
-# mynewproduct/__init__.py
+# agent_transcript_viewer/__init__.py
 _LAZY: dict[str, str] = {
-    "evaluate": "mynewproduct.eval",
-    "tune": "mynewproduct.tune",
+    "evaluate": "agent_transcript_viewer.eval",
+    "tune": "agent_transcript_viewer.tune",
 }
 
 def __getattr__(name: str):
@@ -116,7 +102,7 @@ requires = ["hatchling>=1.20", "hatch-vcs>=0.4"]
 build-backend = "hatchling.build"
 
 [project]
-name = "mynewproduct"
+name = "agent_transcript_viewer"
 dynamic = ["version"]
 description = "One-line description."
 readme = "README.md"
@@ -148,18 +134,18 @@ dev = [
 ]
 
 [project.scripts]
-mynewproduct = "mynewproduct.cli.main:main"
+agent_transcript_viewer = "agent_transcript_viewer.cli.main:main"
 
 [project.urls]
-Homepage = "https://github.com/org/mynewproduct"
-Documentation = "https://mynewproduct.dev"
-Issues = "https://github.com/org/mynewproduct/issues"
+Homepage = "https://github.com/org/agent_transcript_viewer"
+Documentation = "https://agent_transcript_viewer.dev"
+Issues = "https://github.com/org/agent_transcript_viewer/issues"
 
 [tool.hatch.version]
 source = "vcs"
 
 [tool.hatch.build.targets.wheel]
-packages = ["mynewproduct"]
+packages = ["agent_transcript_viewer"]
 
 [tool.ruff]
 line-length = 100
@@ -181,20 +167,20 @@ max-statements = 50
 "tests/**/*.py" = ["PLR2004", "PLR0915", "C901"]
 
 [tool.ruff.lint.isort]
-known-first-party = ["mynewproduct"]
+known-first-party = ["agent_transcript_viewer"]
 
 [tool.ruff.format]
 quote-style = "double"
 
 [tool.pytest.ini_options]
-testpaths = ["mynewproduct", "tests"]
+testpaths = ["agent_transcript_viewer", "tests"]
 python_files = ["*_test.py", "test_*.py"]
 asyncio_mode = "auto"
 asyncio_default_fixture_loop_scope = "function"
 
 [tool.coverage.run]
 branch = true
-source = ["mynewproduct"]
+source = ["agent_transcript_viewer"]
 omit = ["*_test.py", "tests/*"]
 
 [tool.coverage.report]
@@ -211,7 +197,7 @@ skips = ["B101"]            # assert_used — fine in tests
 
 Things worth getting right:
 
-- **Build backend**: `hatchling` for pure-Python, `maturin` for PyO3.
+- **Build backend**: `hatchling`.
 - **Dynamic version from VCS tags** (`hatch-vcs`). No hardcoded version, no `__version__ = "0.1.0"` to update. Wheel version comes from `git describe`.
 - **`requires-python = ">=3.12"`** — lets you use PEP 695 generics (`def f[T](x: T) -> T:`) and `int | None` everywhere without `from __future__ import annotations`.
 - **`[project.scripts]`** for CLI entry points — not `console_scripts` (legacy).
@@ -229,11 +215,11 @@ Things worth getting right:
 For application-level config, the minimum:
 
 ```python
-# mynewproduct/config.py
+# agent_transcript_viewer/config.py
 import os
 from pathlib import Path
 
-PROJECT_DIR = Path(os.environ.get("MYNEWPRODUCT_DIR", str(Path.home() / ".mynewproduct")))
+PROJECT_DIR = Path(os.environ.get("AGENT_TRANSCRIPT_VIEWER_DIR", str(Path.home() / ".agent_transcript_viewer")))
 CACHE_DIR = PROJECT_DIR / "cache"
 ```
 
@@ -248,16 +234,14 @@ If you reach for `pydantic-settings`, you're past minimum. That's fine — verif
 | Task | De facto choice |
 |---|---|
 | Package manager | `uv` |
-| Build (pure Python) | `hatchling` (+ `hatch-vcs`) |
-| Build (PyO3 native) | `maturin` |
+| Build | `hatchling` (+ `hatch-vcs`) |
 | Test runner | `pytest` |
 | Test grouping | `pytest-describe` |
 | Async tests | `pytest-asyncio` (`asyncio_mode = "auto"`) |
 | Type checker | `mypy` (mature) / `pyright` / `ty` (alpha) |
 | Linter + formatter | `ruff` |
 | Security | `bandit` |
-| CLI (production tool) | Rust crate with `clap`, Python wrapper via `maturin` + `bundle_cli` |
-| CLI args (pure-Python utility) | `cyclopts` / `click` / `typer` |
+| CLI args | `click` (or `cyclopts` / `typer`) |
 | HTTP client (sync) | `httpx` (or `requests` if legacy) |
 | HTTP client (async) | `httpx.AsyncClient` / `aiohttp` |
 | Schema validation | `pydantic` (v2) |

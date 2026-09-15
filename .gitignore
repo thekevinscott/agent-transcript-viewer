@@ -4,6 +4,14 @@ dist/
 coverage/
 *.log
 .DS_Store
+.pnpm-store/
+
+# Agent worktrees (see AGENTS.md)
+.worktrees/
+
+# Local agent planning notes (issue drafts, session state)
+internal/
+.github/internal/
 
 # Python
 __pycache__/
@@ -16,12 +24,12 @@ build/
 .dolt/
 *.db
 
-# Fragment folders staged into the npm package at build time (scripts/build.mjs)
-packages/node/changelog.d/
-packages/node/migrations.d/
-
 # Beads issue tracker (local only)
 .beads/
 docs/.vitepress/cache
 docs/.vitepress/dist
 docs/node_modules/
+
+# Stryker scratch files, written by the mutation gate
+.stryker-tmp/
+stryker-setup-*.js

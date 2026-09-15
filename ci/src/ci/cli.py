@@ -11,7 +11,7 @@ from __future__ import annotations
 import argparse
 import sys
 
-from ci import bootstrap_npm, check_changelog, lint_workflow_scripts
+from ci import check_changelog, lint_workflow_scripts, repo_shape
 
 
 def _build_parser() -> argparse.ArgumentParser:
@@ -41,12 +41,12 @@ def _build_parser() -> argparse.ArgumentParser:
     )
     lint.set_defaults(entry=lint_workflow_scripts.run)
 
-    bootstrap = sub.add_parser(
-        "bootstrap-npm",
-        help="Publish 0.0.0-bootstrap npm stubs "
-        "(reads PACKAGES from the environment).",
+    shape = sub.add_parser(
+        "check-repo-shape",
+        help="Fail if template scaffolding survives (rust config, publishable "
+        "npm manifest, template placeholder names).",
     )
-    bootstrap.set_defaults(entry=bootstrap_npm.run)
+    shape.set_defaults(entry=repo_shape.run)
 
     return parser
 

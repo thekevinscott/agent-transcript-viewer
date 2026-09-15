@@ -35,24 +35,24 @@ When the type hints carry the structure, the prose carries the rationale.
 
 **API reference via `mkdocs-material` + `mkdocstrings`** for new projects; `sphinx` + `sphinx-autodoc` is the mature alternative. Both render docstrings to HTML.
 
-**Exception hierarchy** — define a flat tree at `mynewproduct/errors.py`, re-export from `__init__.py`:
+**Exception hierarchy** — define a flat tree at `agent_transcript_viewer/errors.py`, re-export from `__init__.py`:
 
 ```python
-# mynewproduct/errors.py
-class MyNewProductError(Exception):
-    """Base exception for mynewproduct."""
+# agent_transcript_viewer/errors.py
+class AgentTranscriptViewerError(Exception):
+    """Base exception for agent_transcript_viewer."""
 
-class ValidationError(MyNewProductError):
+class ValidationError(AgentTranscriptViewerError):
     """A user input failed schema validation."""
 
-class NotFoundError(MyNewProductError):
+class NotFoundError(AgentTranscriptViewerError):
     """The requested resource does not exist."""
 ```
 
 ```python
-# mynewproduct/__init__.py
-from mynewproduct.errors import MyNewProductError, ValidationError, NotFoundError
-__all__ = ["MyNewProductError", "ValidationError", "NotFoundError", "__version__"]
+# agent_transcript_viewer/__init__.py
+from agent_transcript_viewer.errors import AgentTranscriptViewerError, ValidationError, NotFoundError
+__all__ = ["AgentTranscriptViewerError", "ValidationError", "NotFoundError", "__version__"]
 ```
 
 Give each failure mode its own exception variant. One variant per condition (lock-poison, init-failure, not-ready) keeps `except` clauses precise.
@@ -65,131 +65,46 @@ Give each failure mode its own exception variant. One variant per condition (loc
 
 ## CLI
 
-**Every CLI is a Rust binary.** The Python package is a thin wrapper that puts the binary on `PATH` through `pip install`. Argument parsing (clap), validation, exit codes, the whole runtime lives in the crate. Same goes for the npm sibling.
-
-Why: one source of truth for argument grammar, help text, and error messages across `pip install` and `npm install -g`. `clap` is the strongest CLI framework available, cross-platform static binaries solve distribution, and the wrapper layer stays minimal.
-
-### Layout
-
-```
-mynewproduct/
-  packages/
-    rust/              # binary crate — Cargo.toml, src/main.rs (clap App)
-      Cargo.toml
-      src/
-    node/              # npm wrapper sibling (see ../typescript/shipping.md)
-    python/            # this package
-      pyproject.toml
-      src/mynewproduct/
-        __init__.py
-        _binary/
-          __init__.py  # entrypoint — execs the staged binary
-  putitoutthere.toml
-  CHANGELOG.md       # pointer stub — the record is docs/changelog.d/
-  MIGRATIONS.md      # pointer stub — the record is docs/migrations.d/
-  LICENSE
-```
+**Pure Python, `click` for argument parsing.** The CLI is a thin 1:1 mirror of
+the SDK's public methods — every subcommand maps to one SDK call. stdout is
+reserved for command output; progress and diagnostics go to stderr.
 
 ### `pyproject.toml`
 
 ```toml
 [build-system]
-requires = ["maturin>=1.5"]
-build-backend = "maturin"
+requires = ["hatchling"]
+build-backend = "hatchling.build"
 
 [project]
-name = "mynewproduct"
+name = "agent-transcript-viewer"
 dynamic = ["version"]
-requires-python = ">=3.12"
+requires-python = ">=3.10"
 
 [project.scripts]
-mynewproduct = "mynewproduct._binary:entrypoint"
-
-[tool.maturin]
-python-source = "src"
-include = ["src/mynewproduct/_binary/**"]
+agent-transcript-viewer = "agent_transcript_viewer.cli:main"
 ```
-
-### Launcher
-
-`src/mynewproduct/_binary/__init__.py`:
-
-```python
-import os
-import sys
-from pathlib import Path
-
-
-def entrypoint() -> None:
-    here = Path(__file__).parent
-    binary = here / ("mynewproduct.exe" if os.name == "nt" else "mynewproduct")
-    if not binary.exists():
-        sys.stderr.write(f"mynewproduct binary not found at {binary}\n")
-        sys.exit(1)
-    os.execv(binary, [str(binary), *sys.argv[1:]])
-```
-
-`os.execv` replaces the Python process — no orphaned interpreter, signals route directly to the binary.
-
-### `putitoutthere.toml`
-
-Three-artifact shape:
-
-```toml
-[putitoutthere]
-version = 1
-
-[[package]]
-name          = "mynewproduct-rust"
-kind          = "crates"
-crate         = "mynewproduct"
-path          = "packages/rust"
-first_version = "0.0.1"
-globs         = ["packages/rust/**", "LICENSE"]
-
-[[package]]
-name          = "mynewproduct-py"
-kind          = "pypi"
-pypi          = "mynewproduct"
-path          = "packages/python"
-first_version = "0.0.1"
-build         = "maturin"
-depends_on    = ["mynewproduct-rust"]
-globs         = ["packages/python/**", "packages/rust/**", "LICENSE"]
-targets = [
-  "x86_64-unknown-linux-gnu",
-  "aarch64-unknown-linux-gnu",
-  "x86_64-apple-darwin",
-  "aarch64-apple-darwin",
-  "x86_64-pc-windows-msvc",
-]
-# (npm sibling package omitted — see ../typescript/shipping.md)
-```
-
-`putitoutthere` cross-compiles the binary per target, stages it into `src/mynewproduct/_binary/` before maturin runs, and ships one wheel per platform. `pip install mynewproduct` on any platform gets a working CLI on PATH with no Rust toolchain required.
 
 ### Testing
 
-The crate's logic is tested in Rust (`cargo test`). The Python wrapper ships a single happy-path e2e per command — drive the actual binary in a subprocess and assert against output:
+Drive the CLI in a subprocess for e2e coverage — assert against stdout and
+exit codes:
 
 ```python
 import subprocess
 
-def it_runs_the_tool(tmp_path):
+def it_renders_a_transcript(tmp_path):
     result = subprocess.run(
-        ["mynewproduct", "run", "--input", str(tmp_path / "in.json")],
+        ["agent-transcript-viewer", "write", str(tmp_path / "t.jsonl")],
         capture_output=True,
         text=True,
         check=True,
     )
-    assert "done" in result.stdout
+    assert (tmp_path / "t.html").exists()
 ```
 
-### Pure-Python utilities
-
-For a small Python-only utility that isn't worth a Rust core (script, internal tool, ad-hoc batch job): `cyclopts` for type-driven multi-command CLIs, `click`/`typer` as mature alternatives, `argparse` for one-shot scripts. Anything that's going to be installed by more than a handful of people gets the Rust shape.
-
 ---
+
 
 ## Lint + format
 
@@ -228,7 +143,7 @@ Enable rule groups deliberately. The set above is a reasonable starting point. `
 "tests/**/*.py" = ["PLR2004", "PLR0915", "C901"]
 ```
 
-**Type checker in CI** — `ty check mynewproduct/` or `mypy mynewproduct/` as a separate job. Type errors block merge.
+**Type checker in CI** — `ty check agent_transcript_viewer/` or `mypy agent_transcript_viewer/` as a separate job. Type errors block merge.
 
 **Security**: `bandit` is fine to run in CI. Tell it to skip `B101` (assert-used) for tests. Scope the per-file `# nosec B603,B607` annotations rather than blanket-skipping subprocess rules globally.
 
@@ -253,10 +168,10 @@ format-check:
     uv run ruff format --check .
 
 typecheck:
-    uv run ty check mynewproduct/
+    uv run ty check agent_transcript_viewer/
 
 test-unit:
-    uv run pytest mynewproduct/ -x -q
+    uv run pytest agent_transcript_viewer/ -x -q
 
 test-integration:
     uv run pytest tests/integration/ -x -q
@@ -265,7 +180,7 @@ test-e2e:
     uv run pytest tests/e2e/ -x -q
 
 test-cov:
-    uv run pytest --cov=mynewproduct --cov-report=term-missing --cov-fail-under=85
+    uv run pytest --cov=agent_transcript_viewer --cov-report=term-missing --cov-fail-under=85
 
 ci:
     #!/usr/bin/env bash
@@ -305,7 +220,7 @@ just ci
 | `test.yml` | `uv run pytest` matrix on Python 3.12, 3.13 |
 | `lint.yml` | `uv run ruff check` + `ruff format --check` |
 | `typecheck.yml` | `uv run ty check` (or mypy) |
-| `security.yml` | `bandit -r mynewproduct` |
+| `security.yml` | `bandit -r agent_transcript_viewer` |
 | `coverage.yml` | `pytest --cov --cov-fail-under=85` |
 | `docs.yml` | Build + deploy mkdocs/sphinx site |
 | `changelog-check.yml` | changelog fragment added under `docs/changelog.d/` (or `skip-changelog:` trailer) |
@@ -329,7 +244,7 @@ just ci
 on:
   push:
     paths:
-      - "mynewproduct/**"
+      - "agent_transcript_viewer/**"
       - "tests/**"
       - "pyproject.toml"
       - "uv.lock"
@@ -350,7 +265,7 @@ concurrency:
 
 ## Release flow
 
-**Use `putitoutthere`.** Single reusable workflow, single config file, OIDC trusted publishers across PyPI / crates.io / npm. Versions derive from git tags via `hatch-vcs`. Provenance, retry-with-backoff, tag rollback, registry idempotency are all inside the workflow. Cross-cutting CHANGELOG / MIGRATIONS rules live in [../repo.md](../repo.md).
+**Use `putitoutthere`.** Single reusable workflow, single config file, OIDC trusted publishing to PyPI. Versions derive from git tags via `hatch-vcs`. Provenance, retry-with-backoff, tag rollback, registry idempotency are all inside the workflow. Cross-cutting CHANGELOG / MIGRATIONS rules live in [../repo.md](../repo.md).
 
 ### `putitoutthere.toml`
 
@@ -361,31 +276,14 @@ Repo-root config. Prescriptive schema — every package declares the same fields
 version = 1
 
 [[package]]
-name       = "mynewproduct"
+name       = "agent_transcript_viewer"
 kind       = "pypi"
 path       = "."
-globs      = ["mynewproduct/**/*.py", "pyproject.toml", "uv.lock"]
-build      = "hatch"            # or "maturin" for PyO3 packages
+globs      = ["agent_transcript_viewer/**/*.py", "pyproject.toml", "uv.lock"]
+build      = "hatch"
 tag_format = "v{version}"
 ```
 
-For maturin packages, declare `targets`:
-
-```toml
-[[package]]
-name    = "mynewproduct"
-kind    = "pypi"
-path    = "."
-globs   = ["src/**", "python/**", "pyproject.toml"]
-build   = "maturin"
-targets = [
-  "x86_64-unknown-linux-gnu",
-  "aarch64-unknown-linux-gnu",
-  "x86_64-apple-darwin",
-  "aarch64-apple-darwin",
-  "x86_64-pc-windows-msvc",
-]
-```
 
 ### Reusable workflow
 
@@ -424,53 +322,5 @@ Grammar: `release: {patch|minor|major|skip} [pkg1, pkg2, ...]`. Last trailer win
 One-time registry setup per package — OIDC only.
 
 - **PyPI**: under `https://pypi.org/manage/project/<name>/settings/publishing/`, add the GitHub publisher (owner, repo, workflow filename, and — if you pin one — the `release` environment). Brand-new projects use a pending publisher.
-- **crates.io** (when the package ships a Rust core): publish once via classic `cargo`, then enable trusted publishing under `https://crates.io/crates/<crate>/settings`.
-- **npm** (when the package has a TS wrapper sibling): bootstrap one version with `NODE_AUTH_TOKEN`, then **Require trusted publisher** under `https://www.npmjs.com/package/<name>/access`.
 
 ---
-
-## PyO3 bindings
-
-When the Python package wraps a Rust crate via PyO3 + maturin:
-
-- **The binding wraps the Rust *SDK***, not the core directly. If you find yourself reimplementing scanner-loops, watcher-loops, or domain logic in the PyO3 binding, you've drifted — that work belongs in the SDK crate, which both bindings (Python, JS) consume.
-- **`extension-module` feature** in `Cargo.toml`, gated by `[features]` so the crate can also build as a plain rlib for testing:
-
-  ```toml
-  [features]
-  extension-module = ["pyo3/extension-module"]
-  [dependencies]
-  pyo3 = { version = "0.22", default-features = false, features = ["macros"] }
-  ```
-
-- **`module-name = "mynewproduct._mycore"`** with the `_`-prefix convention. The Python package re-exports from the compiled extension.
-- **Preserve type info across the FFI boundary** — convert Rust types to Python types deliberately:
-
-  ```rust
-  fn convert_value(py: Python, v: &Value) -> PyResult<PyObject> {
-      // bool BEFORE int — Python's bool is a subclass of int
-      match v {
-          Value::Bool(b) => Ok(b.into_py(py)),
-          Value::Int(i) => Ok(i.into_py(py)),
-          Value::String(s) => Ok(s.into_py(py)),
-          // ...
-      }
-  }
-  ```
-
-  The `bool`-before-`int` ordering matters for Python's subtype rules.
-
-- **Map Rust error variants to specific Python exception types** at the boundary, so Python consumers can `except` precisely:
-
-  ```rust
-  match err {
-      DbError::SchemaMismatch(msg) => SchemaMismatchError::new_err(msg),
-      DbError::NotFound(name) => NotFoundError::new_err(format!("not found: {name}")),
-      _ => PyRuntimeError::new_err(err.to_string()),
-  }
-  ```
-
-  Stringifying every error means Python consumers see a generic `RuntimeError` and can't catch specifics.
-
-- **Ship typed stubs** if the public API is non-trivial. Either inline `.pyi` files or maturin-generated stubs.
-- **`py.typed` marker** in the Python source dir so type checkers know the package is typed.

@@ -1,6 +1,6 @@
 # Repo-wide conventions
 
-Cross-cutting rules that apply across all language packages. Language-specific guidance lives in `python-supervision.md`, `typescript-supervision.md`, `rust-supervision.md`.
+Cross-cutting rules that apply across all language packages. Language-specific guidance lives in [`python/`](python/index.md) and [`typescript/`](typescript/index.md).
 
 ## Changelog + migration fragments
 
@@ -22,9 +22,30 @@ Every PR that changes public API adds at least one fragment naming each touched 
 
 **Stubs at the conventional paths** — `packages/<pkg>/CHANGELOG.md`, `packages/<pkg>/MIGRATIONS.md`, and `docs/migrations.md` are short pointers into the folders, so anyone fetching the conventional filename gets one hop instead of a 404. Never append entries to the stubs.
 
-**Ship the folders in artifacts where the toolchain allows** — the npm package stages both folders into the tarball at build time (`files:` allowlist + a copy step in `scripts/build.mjs`), so the installed copy under `node_modules/` is version-exact: it contains precisely the fragments up to that release. `cargo package` and maturin cannot include files outside the package root, so crate and wheel consumers take the stub → folder hop on GitHub instead.
+**Ship the folders in artifacts where the toolchain allows** — today the single published artifact is the Python wheel, and hatchling cannot include files outside the package root, so wheel consumers take the stub → folder hop on GitHub instead.
 
 Public-API surface for the purpose of these fragments: every exported value/type, every CLI flag, every config key, every observable artifact (tag format, GitHub Release body shape). Internal refactors, test-only changes, and docs-only edits stay out.
+
+## Repo shape (post-template prune)
+
+This repo was scaffolded from `template-lib` (Rust core + maturin Python
+wrapper + npm-published Node shim) and pruned to its actual shape:
+
+- **No Rust.** `packages/rust/`, the `rust.yml` workflow, all `rust-*`
+  justfile recipes, and every maturin/cargo reference are deleted. The
+  Python package builds with `hatchling`.
+- **One published package: PyPI.** `putitoutthere.toml` declares exactly
+  one `[[package]]` (kind `pypi`, name `agent-transcript-viewer`).
+- **`packages/node` is internal tooling.** It builds the static viewer
+  frontend whose output is bundled into the wheel; its `package.json` is
+  `"private": true` and carries no `bin` / `optionalDependencies` /
+  publish config. npm publishing machinery (`bootstrap-npm.yml`, the
+  `ci bootstrap-npm` subcommand, per-platform sub-packages) is deleted.
+
+The `check-repo-shape` gate in the `ci` package
+(`uv run --project ci ci check-repo-shape`, also `just repo-shape`)
+enforces this structure — if any template scaffolding regrows, that gate
+fails with a list of what to delete.
 
 ## CI logic in scripts, not workflow YAML
 
@@ -32,6 +53,6 @@ CI behavior that's more than glue lives in an **executable, tested script**, not
 
 **The line.** A `run:` step is fine when it's a few straight-line commands, or a lone guard (`if … then exit; fi` around an early exit). Extract it the moment it grows iteration (`for` / `while` / `until` / `select`), multi-branch dispatch (`case`), text-munging (`awk` / `sed`, chained `grep` pipelines), or simply gets long. The trigger is *logic*, not line count — five sequential `mkdir` / `install` commands stay inline; a three-line `for` loop goes.
 
-**Where it goes.** Extracted logic lives in the repo-internal CLI at [`ci/`](../../ci/) — a real uv-managed package (`template-lib-ci`), built and tested to the same standards as shipped code but never published. Each gate is a subcommand (`ci check-changelog`, `ci lint-workflow-scripts`, `ci bootstrap-npm`) whose module has a colocated test (`foo.py` ↔ `foo_test.py`, the same testing-conventions standard the packages follow), and workflows invoke it as a one-line `run:` (`uv run --project ci ci <gate>`). Python is the default; the language is open, but it must be executable and testable. The tests run in [`gha-scripts.yml`](../../.github/workflows/gha-scripts.yml) and locally via `just gha-test`. Convention source: [thekevinscott/putitoutthere#452](https://github.com/thekevinscott/putitoutthere/issues/452).
+**Where it goes.** Extracted logic lives in the repo-internal CLI at [`ci/`](../../ci/) — a real uv-managed package (`agent-transcript-viewer-ci`), built and tested to the same standards as shipped code but never published. Each gate is a subcommand (`ci check-changelog`, `ci lint-workflow-scripts`, `ci check-repo-shape`) whose module has a colocated test (`foo.py` ↔ `foo_test.py`, the same testing-conventions standard the packages follow), and workflows invoke it as a one-line `run:` (`uv run --project ci ci <gate>`). Python is the default; the language is open, but it must be executable and testable. The tests run in [`gha-scripts.yml`](../../.github/workflows/gha-scripts.yml) and locally via `just gha-test`. Convention source: [thekevinscott/putitoutthere#452](https://github.com/thekevinscott/putitoutthere/issues/452).
 
 **Enforcement.** [`ci lint-workflow-scripts`](../../ci/src/ci/lint_workflow_scripts.py) (`just gha-lint`, and a job in `gha-scripts.yml`) scans every workflow and composite action and fails CI on an inline block that crosses the line. It's a pragmatic scanner, not a shell parser — it keys on the unambiguous markers above and favors precision, so a borderline body may slip through. Extract those by judgment anyway; an extracted script is always testable, and the gate stops complaining.

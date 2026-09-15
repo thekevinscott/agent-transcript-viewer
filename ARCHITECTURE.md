@@ -1,38 +1,47 @@
 # Architecture
 
-A single Rust binary is the source of truth. Python and Node wrappers
-exist only to put that binary on `PATH` under their respective package
-manager.
+The Python package is the product and the only published artifact. The
+TypeScript workspace exists to build the static viewer frontend; its output
+is bundled into the Python wheel at build time and never touches npm.
 
 ## Packages
 
 ```
 packages/
-  rust/      crate — the CLI + library. clap for parsing.
-  python/    maturin-built wheel that bundles the rust binary.
-  node/      thin wrapper, resolves a per-platform optional dep
-             whose payload is the rust binary.
+  python/    hatchling-built wheel — the SDK (and later the thin CLI).
+  node/      internal frontend workspace (Vitest + tsc). Never published.
 docs/        VitePress site (published to GitHub Pages).
   internals/ contributor + agent conventions (not published).
+ci/          repo-internal CI gate CLI (uv-managed, never published).
 ```
+
+## Offline packaging
+
+The viewer is a single self-contained HTML file built at package-build time
+and shipped inside the wheel. Rendering a transcript needs no Node, no
+browser automation, and no network at runtime — the SDK reads the bundled
+asset, injects the transcript data, and writes/serves the result.
 
 ## Release flow
 
-`putitoutthere.toml` declares the three artifacts and their dependency
-cascade. The `Release` workflow (`.github/workflows/release.yml`) calls
-the reusable workflow at `thekevinscott/putitoutthere`. Edits under
-`packages/rust/**` retrigger PyPI and npm builds via the cascade.
+`putitoutthere.toml` declares exactly one package (PyPI). The `Release`
+workflow (`.github/workflows/release.yml`) calls the reusable workflow at
+`thekevinscott/putitoutthere`; the PyPI upload runs in this repo's workflow
+context so Trusted Publishing claims line up (see the comments in that file).
 
 ## CI gates
 
-- Per-language workflow (`rust.yml`, `python.yml`, `node.yml`) runs lint + test + build with path filters.
+- Per-language workflows (`python.yml`, `node.yml`) run lint + typecheck + test + build with path filters.
+- `conventions.yml` enforces the colocated-test standard on both packages.
+- `check.yml` / `build-check.yml` validate `putitoutthere.toml` and the release build on every PR.
 - `changelog.yml` enforces a changelog fragment under `docs/changelog.d/` on PRs that touch package code.
+- `gha-scripts.yml` runs the repo-internal `ci` package's tests (workflow-YAML linter, changelog gate, repo-shape structural gate).
 - `docs.yml` builds + deploys the VitePress site.
 - `pr-monitor.yml` gates merge on the aggregate CI status.
 
 ## Public-API surface
 
 Defined in `docs/internals/repo.md`: every exported value/type, every CLI
-flag, every config key, every observable artifact. Changes to that
-surface require a fragment under `docs/changelog.d/` (plus
-`docs/migrations.d/` when breaking).
+flag, every config key, every observable artifact. Changes to that surface
+require a fragment under `docs/changelog.d/` (plus `docs/migrations.d/` when
+breaking).

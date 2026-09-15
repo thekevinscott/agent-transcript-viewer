@@ -1,5 +1,7 @@
-# mynewproduct (Node)
+# agent-transcript-viewer frontend (internal)
 
-```
-npm install mynewproduct
-```
+Internal TypeScript workspace for the static HTML viewer. **Never published to
+npm** — the built viewer artifact is bundled into the Python wheel
+(`packages/python`) and served/saved by the Python SDK.
+
+Source lives in `src/` with colocated `*.test.ts` unit tests (Vitest).

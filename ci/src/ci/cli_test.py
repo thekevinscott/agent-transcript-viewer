@@ -28,9 +28,9 @@ def test_lint_workflow_scripts_defaults_to_empty_argv(monkeypatch):
     assert cli.main(["lint-workflow-scripts"]) == 0
 
 
-def test_bootstrap_npm_dispatches_and_propagates_exit_code(monkeypatch):
-    monkeypatch.setattr(cli.bootstrap_npm, "main", lambda: 1)
-    assert cli.main(["bootstrap-npm"]) == 1
+def test_check_repo_shape_dispatches_and_propagates_exit_code(monkeypatch):
+    monkeypatch.setattr(cli.repo_shape, "main", lambda: 1)
+    assert cli.main(["check-repo-shape"]) == 1
 
 
 def test_unknown_subcommand_is_a_usage_error():

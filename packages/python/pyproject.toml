@@ -1,19 +1,40 @@
 [build-system]
-requires = ["maturin>=1.7,<2.0"]
-build-backend = "maturin"
+requires = ["hatchling"]
+build-backend = "hatchling.build"
 
 [project]
-name = "mynewproduct"
-dynamic = ["version"]
-description = "A short, one-line description of your project."
+name = "agent-transcript-viewer"
+description = "Generate and share self-contained HTML views of agent transcripts"
 readme = "README.md"
-requires-python = ">=3.9"
-license = { text = "MIT" }
-authors = [{ name = "Kevin Scott", email = "me@thekevinscott.com" }]
+requires-python = ">=3.10"
+license = "MIT"
+authors = [{ name = "Kevin Scott" }]
+keywords = ["agents", "transcripts", "viewer", "llm", "observability"]
+classifiers = [
+    "Development Status :: 3 - Alpha",
+    "Intended Audience :: Developers",
+    "Programming Language :: Python :: 3",
+    "Topic :: Software Development",
+]
+dynamic = ["version"]
 
 [project.urls]
-Repository = "https://github.com/thekevinbot/template-lib"
+Repository = "https://github.com/thekevinscott/agent-transcript-viewer"
 
-[tool.maturin]
-manifest-path = "../rust/Cargo.toml"
-bindings = "bin"
+[tool.hatch.version]
+path = "src/agent_transcript_viewer/_version.py"
+
+[tool.hatch.build.targets.wheel]
+packages = ["src/agent_transcript_viewer"]
+# Unit tests are colocated with their source, so the build has to drop them.
+exclude = ["*_test.py", "conftest.py"]
+
+[tool.hatch.build.targets.sdist]
+exclude = ["*_test.py", "conftest.py"]
+
+[dependency-groups]
+dev = ["pytest>=8", "ruff>=0.8", "mypy>=1.13"]
+
+[tool.pytest.ini_options]
+testpaths = ["src", "tests"]
+pythonpath = ["src"]

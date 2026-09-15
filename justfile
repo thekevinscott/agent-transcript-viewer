@@ -3,41 +3,24 @@ set shell := ["bash", "-cu"]
 default:
     @just --list
 
-# ---- Rust ----------------------------------------------------------------
-
-rust-lint:
-    cd packages/rust && cargo fmt --all -- --check && cargo clippy --all-targets -- -D warnings
-
-rust-format:
-    cd packages/rust && cargo fmt --all
-
-rust-test:
-    cd packages/rust && cargo test
-
-rust-cov:
-    cd packages/rust && cargo llvm-cov --ignore-filename-regex 'main\.rs' --fail-under-lines 95
-
-rust-build:
-    cd packages/rust && cargo build --release
-
 # ---- Python --------------------------------------------------------------
 
 py-lint:
-    cd packages/python && ruff check . && ruff format --check .
+    cd packages/python && uv run ruff check . && uv run ruff format --check .
 
 py-format:
-    cd packages/python && ruff check --fix . && ruff format .
+    cd packages/python && uv run ruff check --fix . && uv run ruff format .
 
 py-typecheck:
-    cd packages/python && mypy .
+    cd packages/python && uv run mypy src
 
 py-test:
-    cd packages/python && pytest
+    cd packages/python && uv run pytest
 
 py-build:
-    cd packages/python && maturin build --release
+    cd packages/python && uv build
 
-# ---- Node ----------------------------------------------------------------
+# ---- Node (internal frontend workspace — never published) ----------------
 
 node-install:
     cd packages/node && pnpm install --no-frozen-lockfile
@@ -75,13 +58,18 @@ gha-lint:
 gha-test:
     cd ci && uv run pytest
 
+# Gate: fail if template scaffolding survives (see
+# docs/internals/repo.md, "Repo shape"). Run from the repo root.
+repo-shape:
+    uv run --project ci python -m ci.repo_shape
+
 # ---- Aggregates ----------------------------------------------------------
 
-lint: rust-lint py-lint node-lint gha-lint
-format: rust-format py-format
+lint: py-lint node-lint gha-lint
+format: py-format
 typecheck: py-typecheck node-typecheck
-test: rust-test py-test node-test gha-test
-build: rust-build py-build node-build
+test: py-test node-test gha-test
+build: py-build node-build
 
 ci: lint typecheck test
 
@@ -89,4 +77,4 @@ hooks:
     pre-commit install --install-hooks
 
 clean:
-    rm -rf packages/rust/target packages/python/dist packages/node/dist docs/.vitepress/dist
+    rm -rf packages/python/dist packages/node/dist docs/.vitepress/dist

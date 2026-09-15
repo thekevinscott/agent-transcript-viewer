@@ -2,7 +2,7 @@
 # standards as shipped code — but NEVER published (see the Private classifier).
 # Workflows invoke it as one-line `run:` steps: `uv run --project ci ci <gate>`.
 [project]
-name = "template-lib-ci"
+name = "agent-transcript-viewer-ci"
 version = "0.0.0"
 description = "Repo-internal CLI backing this repo's CI gates; never published."
 requires-python = ">=3.12"
