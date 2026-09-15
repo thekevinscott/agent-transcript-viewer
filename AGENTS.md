@@ -12,6 +12,20 @@ Conventions, supervision rules, and per-language style live under
 - `docs/internals/python/` — Python style, testing, shipping, review, setup.
 - `docs/internals/typescript/` — TypeScript style, testing, shipping, review, setup.
 
+## Worktrees
+
+**All work happens in git worktrees under `.worktrees/`.** Never edit files in
+the primary checkout; it stays on `main` and clean. `.worktrees/` is
+gitignored.
+
+- Create one worktree per branch/PR: `git worktree add .worktrees/<branch> -b <branch>`.
+  The worktree directory name and the branch name are **identical** —
+  `.worktrees/<branch>` always contains branch `<branch>`.
+- Branch names use **dashes only**: lowercase letters, digits, and `-`.
+  No slashes, no spaces (e.g., `add-theme-selector`, not `feature/add-theme-selector`).
+- Do all editing, building, and testing inside `.worktrees/<branch>/`.
+- When the PR merges, remove the worktree: `git worktree remove .worktrees/<branch>`.
+
 ## Workflow
 
 - Use `just` for local tasks (`just lint`, `just test`, `just ci`).

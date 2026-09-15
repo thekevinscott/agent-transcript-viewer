@@ -5,6 +5,9 @@ coverage/
 *.log
 .DS_Store
 
+# Agent worktrees (see AGENTS.md)
+.worktrees/
+
 # Python
 __pycache__/
 *.py[cod]
