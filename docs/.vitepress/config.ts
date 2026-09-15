@@ -3,7 +3,7 @@ import { defineConfig } from 'vitepress'
 export default defineConfig({
   title: '',
   description: '',
-  base: '/template-lib/',
+  base: '/agent-transcript-viewer/',
   cleanUrls: true,
   // AGENTS.md is an agent-facing contract, not site content — keep it out of
   // the build. The changelog/migration fragment folders are the raw record

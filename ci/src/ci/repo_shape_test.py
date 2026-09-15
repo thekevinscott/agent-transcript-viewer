@@ -4,6 +4,7 @@ import json
 from pathlib import Path
 
 from ci.repo_shape import (
+    TEMPLATE_NAME,
     manifest_violations,
     putitoutthere_violations,
     rust_remnants,
@@ -111,14 +112,14 @@ def test_publishable_node_package_is_flagged(tmp_path):
 
 def test_template_name_is_flagged(tmp_path):
     root = _clean_root(tmp_path)
-    _write(root / "README.md", "# mynewproduct\n")
+    _write(root / "README.md", f"# {TEMPLATE_NAME}\n")
     assert template_name_remnants(root) == ["README.md"]
 
 
 def test_skipped_directories_are_not_scanned(tmp_path):
     root = _clean_root(tmp_path)
-    _write(root / "node_modules/dep/package.json", '"mynewproduct"')
-    _write(root / "internal/notes.md", "mynewproduct")
+    _write(root / "node_modules/dep/package.json", f'"{TEMPLATE_NAME}"')
+    _write(root / "internal/notes.md", TEMPLATE_NAME)
     assert template_name_remnants(root) == []
 
 

@@ -4,26 +4,27 @@ diataxis: tutorial
 
 # Getting Started
 
-<!-- One-paragraph orientation: what this is, what the reader will accomplish. -->
+Agent Transcript Viewer turns an agent transcript into a single interactive
+HTML file. Install the Python package, point it at a transcript, and open the
+result in any browser.
 
 ## Install
 
-<!-- Install commands per language. -->
-
 ```sh
-# rust
-cargo add <crate>
-
-# python
-pip install <package>
-
-# node
-npm install <package>
+pip install agent-transcript-viewer
 ```
 
-## Your first call
+## Your first view
 
-<!-- Smallest end-to-end example that runs successfully. -->
+<!-- Smallest end-to-end example that runs successfully. Filled in when the
+SDK lands (see the sdk epic). -->
+
+```python
+from agent_transcript_viewer import AgentTranscriptViewer
+
+viewer = AgentTranscriptViewer(transcript="path/to/transcript.jsonl")
+viewer.write("transcript.html")
+```
 
 ## Next steps
 

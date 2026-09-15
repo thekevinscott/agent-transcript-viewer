@@ -1,37 +1,19 @@
 {
-  "name": "mynewproduct",
-  "version": "0.0.1",
-  "description": "A short, one-line description of your project.",
+  "name": "agent-transcript-viewer-frontend",
+  "version": "0.0.0",
+  "private": true,
+  "description": "Internal frontend workspace for the agent-transcript-viewer static HTML viewer. Never published; the built artifact ships inside the Python wheel.",
   "license": "MIT",
-  "repository": "https://github.com/thekevinbot/template-lib",
+  "repository": "https://github.com/thekevinscott/agent-transcript-viewer",
   "type": "module",
-  "bin": {
-    "mynewproduct": "dist/bin.js"
-  },
-  "files": [
-    "dist/",
-    "changelog.d/",
-    "migrations.d/"
-  ],
   "scripts": {
     "build": "node scripts/build.mjs",
     "lint": "eslint src",
     "typecheck": "tsc -p tsconfig.json --noEmit",
-    "test": "vitest run",
-    "prepublishOnly": "npm run build"
+    "test": "vitest run"
   },
   "engines": {
     "node": ">=22"
-  },
-  "dependencies": {
-    "bin-shim": "^0.1.1"
-  },
-  "optionalDependencies": {
-    "@mynewproduct/x86_64-unknown-linux-gnu": "0.0.1",
-    "@mynewproduct/aarch64-unknown-linux-gnu": "0.0.1",
-    "@mynewproduct/x86_64-apple-darwin": "0.0.1",
-    "@mynewproduct/aarch64-apple-darwin": "0.0.1",
-    "@mynewproduct/x86_64-pc-windows-msvc": "0.0.1"
   },
   "devDependencies": {
     "@stylistic/eslint-plugin": "^5.10.0",

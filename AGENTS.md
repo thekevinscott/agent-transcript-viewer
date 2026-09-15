@@ -8,7 +8,6 @@ Conventions, supervision rules, and per-language style live under
 
 - `docs/internals/repo.md` — cross-cutting rules (changelog/migration fragment philosophy, public-API surface, CI-logic-in-scripts).
 - `docs/AGENTS.md` — how the docs site is organized ([Diataxis](https://diataxis.fr)) and the per-page quadrant rule.
-- `docs/internals/rust/` — Rust style, testing, shipping, review, code-smells.
 - `docs/internals/python/` — Python style, testing, shipping, review, setup.
 - `docs/internals/typescript/` — TypeScript style, testing, shipping, review, setup.
 
@@ -30,7 +29,7 @@ gitignored.
 
 - Use `just` for local tasks (`just lint`, `just test`, `just ci`).
 - Unit tests are **colocated** with their source (`foo.py` ↔ `foo_test.py`,
-  `foo.ts` ↔ `foo.test.ts`; Rust uses inline `#[cfg(test)]`). This is the
+  `foo.ts` ↔ `foo.test.ts`). This is the
   [testing-conventions](https://github.com/thekevinscott/testing-conventions)
   standard, enforced in CI by `.github/workflows/conventions.yml`.
 - **CI logic lives in scripts, not workflow YAML.** `run:` / `github-script`
@@ -54,21 +53,16 @@ gitignored.
 
 Before the first `Release` run on a fresh scaffold:
 
-1. **Repo must be public.** Trusted Publishing on npm / PyPI / crates.io
-   requires the provider to inspect the workflow file at the configured
-   ref; private repos cannot satisfy this. The `preflight` job in
+1. **Repo must be public.** Trusted Publishing on PyPI requires the
+   provider to inspect the workflow file at the configured ref; private
+   repos cannot satisfy this. The `preflight` job in
    `.github/workflows/release.yml` fails fast if the repo is private.
-2. **Run `bootstrap-npm.yml` manually once.** npm Trusted Publishing
-   binds to an already-published package, so the very first publish
-   needs a long-lived `NPM_TOKEN` to push `0.0.0-bootstrap` stubs:
-   `gh workflow run bootstrap-npm.yml -f packages="name1,name2,..."`.
-   See the comment block at the top of that file for the full sequence
-   (token requirements, Trusted Publisher registration, secret cleanup).
-   Easy to forget — without it, `Release` succeeds locally but the npm
-   publish step 404s on the first run.
-3. **`NPM_TOKEN` and `CARGO_REGISTRY_TOKEN` set as repo secrets.** Both
-   are forwarded to the putitoutthere reusable workflow for first
-   publishes and can be dropped once Trusted Publishers are registered.
+2. **PyPI Trusted Publisher registered.** Brand-new projects use a
+   *pending publisher*: under
+   `https://pypi.org/manage/account/publishing/`, register the repo,
+   the `release.yml` workflow filename, and the project name
+   (`agent-transcript-viewer`) before the first release. No long-lived
+   tokens are needed at any point — PyPI is the only registry.
 
 ## Out of scope
 

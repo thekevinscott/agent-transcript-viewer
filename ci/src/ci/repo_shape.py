@@ -10,11 +10,16 @@ half-done.
 
 from __future__ import annotations
 
+import argparse
 import json
 import tomllib
 from pathlib import Path
 
 REPO_ROOT = Path(__file__).resolve().parents[3]
+
+# The template's placeholder product name. Written split so this module and
+# its test don't trip the very check they implement.
+TEMPLATE_NAME = "my" + "newproduct"
 
 # Directories that are not live config: dependency trees, build output,
 # VCS internals, and local agent planning notes.
@@ -109,7 +114,7 @@ def template_name_remnants(root: Path = REPO_ROOT) -> list[str]:
         path.relative_to(root).as_posix()
         for path in _files(root)
         if path.suffix in {".toml", ".json", ".yml", ".py", ".ts", ".mjs", ".md"}
-        and "mynewproduct" in path.read_text(errors="ignore")
+        and TEMPLATE_NAME in path.read_text(errors="ignore")
     ]
 
 
@@ -124,6 +129,7 @@ def violations(root: Path = REPO_ROOT) -> list[str]:
 
 
 def main() -> int:
+    """Entry point. Returns the process exit code."""
     problems = violations()
     for problem in problems:
         print(f"::error::{problem}")
@@ -132,3 +138,12 @@ def main() -> int:
         return 1
     print("repo shape OK: no rust, single PyPI package, renamed manifests")
     return 0
+
+
+def run(_args: argparse.Namespace) -> int:
+    """argparse adapter so ``ci.cli`` can dispatch uniformly."""
+    return main()
+
+
+if __name__ == "__main__":
+    raise SystemExit(main())
