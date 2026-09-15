@@ -2,3 +2,14 @@
 # npm runs `prepare`/`prepack` on `pack` but can't guess the build script's
 # name, so the packaging gate needs it stated to get a dist/ to scan.
 build_command = "pnpm build"
+
+# `export const VIEWER_NAME` is a module-level constant, so Stryker classes its
+# mutant as static: it is evaluated at import time, attributed to no individual
+# test, and reported as survived under `perTest` coverage analysis no matter
+# what the suite asserts. The entry goes stale loudly — the gate hard-errors on
+# a listed line that stops failing — once real code replaces the placeholder.
+[[typescript.exempt]]
+path = "index.ts"
+rules = ["mutation"]
+lines = [4]
+reason = "static mutant: a module-scope const is evaluated at import, so no per-test coverage can kill it"
