@@ -9,7 +9,7 @@ is bundled into the Python wheel at build time and never touches npm.
 ```
 packages/
   python/    hatchling-built wheel — the SDK (and later the thin CLI).
-  node/      internal frontend workspace (Vitest + tsc). Never published.
+  frontend/  internal viewer workspace (Vitest + tsc). Never published.
 docs/        VitePress site (published to GitHub Pages).
   internals/ contributor + agent conventions (not published).
 ```
@@ -30,7 +30,7 @@ context so Trusted Publishing claims line up (see the comments in that file).
 
 ## CI gates
 
-- Per-language workflows (`python.yml`, `node.yml`) run lint + typecheck + test + build with path filters.
+- Per-language workflows (`python.yml`, `frontend.yml`) run lint + typecheck + test + build with path filters.
 - `conventions.yml` runs the
   [testing-conventions](https://github.com/thekevinscott/testing-conventions)
   standard on both packages, once per language. It names no `gates:`, which

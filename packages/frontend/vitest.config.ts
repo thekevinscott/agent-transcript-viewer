@@ -5,7 +5,7 @@ import { defineConfig } from 'vitest/config';
 // file. Unit tests are colocated with their subject as `*.test.ts`.
 //
 // Every glob is cwd-agnostic on purpose: the coverage gate runs vitest from
-// the scan root (packages/node/src) while `pnpm test` and the mutation gate
+// the scan root (packages/frontend/src) while `pnpm test` and the mutation gate
 // run from the package root, and a `src/`-anchored glob matches in only one
 // of the two.
 export default defineConfig({

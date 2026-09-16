@@ -11,7 +11,7 @@ description = "Repo-wide allowlists"
 paths = [
   '''(?i)^docs/.vitepress/cache/''',
   '''(?i)^packages/rust/target/''',
-  '''(?i)^packages/node/dist/''',
+  '''(?i)^packages/frontend/dist/''',
   '''(?i)^packages/python/dist/''',
   '''(?i)\.lock$''',
 ]

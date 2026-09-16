@@ -1,5 +1,5 @@
 # putitoutthere config — one published package: the Python SDK on PyPI.
-# The Node workspace under packages/node is internal tooling (the viewer's
+# The workspace under packages/frontend is internal tooling (the viewer's
 # frontend source and build) and is never published.
 
 [putitoutthere]
