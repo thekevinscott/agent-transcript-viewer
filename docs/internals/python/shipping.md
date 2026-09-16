@@ -63,6 +63,51 @@ Give each failure mode its own exception variant. One variant per condition (loc
 
 ---
 
+## Offline packaging: bundling the viewer artifact
+
+The wheel ships a self-contained `viewer.html` so the installed package can
+generate, serve, and export views with no Node, no browser, and no network
+access at runtime (issue #6). The pipeline that gets it there:
+
+1. **`packages/node` builds it.** `packages/node/scripts/build.mjs` compiles
+   the frontend workspace with `tsc`, then assembles
+   `packages/node/dist/viewer.html` — a single HTML file with the compiled
+   entry JS inlined in a `<script>` tag and no external asset requests. This
+   file is gitignored; it's build output, not source.
+2. **A hatchling build hook copies it in.** `packages/python/hatch_build.py`
+   is registered under `[tool.hatch.build.hooks.custom]` in
+   `pyproject.toml`. During `uv build` (or `hatch build`), it copies
+   `packages/node/dist/viewer.html` to
+   `packages/python/src/agent_transcript_viewer/_assets/viewer.html`. That
+   destination is also gitignored — it's produced by the build, never
+   committed.
+3. **`artifacts` forces it into the archive.** Hatchling's default file
+   collection respects `.gitignore`, which would otherwise silently drop a
+   gitignored file from the wheel and sdist. Both
+   `[tool.hatch.build.targets.wheel]` and `[...targets.sdist]` list
+   `src/agent_transcript_viewer/_assets/viewer.html` under `artifacts` to
+   force-include it regardless.
+4. **`uv build` builds the wheel from the sdist**, in an isolated directory
+   that has no `packages/node` sibling. The build hook runs a second time
+   in that context; it checks whether the asset already exists (it does —
+   it travelled inside the sdist via the same `artifacts` entry) before
+   requiring the node build to be present, so the second pass is a no-op.
+5. **The SDK reads it back via `importlib.resources`.**
+   `agent_transcript_viewer.get_viewer_html()`
+   (`packages/python/src/agent_transcript_viewer/viewer_assets.py`) reads
+   the bundled file through `importlib.resources.files(...)` — never a path
+   relative to the working directory or `__file__` arithmetic — so it works
+   the same way whether the package is installed from a wheel, an sdist
+   build, or run editable.
+
+Building the artifact ahead of time — rather than doing it lazily on first
+use — keeps the SDK's only I/O dependency at runtime a single resource read.
+`packages/python/tests/integration/viewer_asset_packaging_test.py` builds
+the real wheel and sdist and asserts the artifact is present in both and
+readable via `importlib.resources`.
+
+---
+
 ## CLI
 
 **Pure Python, `click` for argument parsing.** The CLI is a thin 1:1 mirror of
