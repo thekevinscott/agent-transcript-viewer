@@ -40,6 +40,15 @@ def test_leaves_an_editable_install_without_the_asset(root):
     assert not root.joinpath(*DEST).exists()
 
 
+def test_copies_into_an_assets_directory_that_already_exists(root):
+    _write(root.parent / "node" / "dist" / "viewer.html", "<!doctype html>")
+    root.joinpath(*DEST).parent.mkdir(parents=True)
+
+    _hook(root).initialize("standard", {})
+
+    assert root.joinpath(*DEST).read_text() == "<!doctype html>"
+
+
 def test_keeps_the_asset_that_travelled_inside_an_sdist(root):
     _write(root.joinpath(*DEST), "from the sdist")
 
