@@ -25,6 +25,25 @@ gitignored.
 - Do all editing, building, and testing inside `.worktrees/<branch>/`.
 - When the PR merges, remove the worktree: `git worktree remove .worktrees/<branch>`.
 
+## Merging
+
+**Never merge.** Agents open PRs and stop there. Kevin merges through the
+GitHub UI as a human.
+
+- Never merge on your own initiative, however green the checks are.
+- Never suggest merging, and never offer to merge as a next step.
+- The only exception is an explicit, specific instruction from Kevin to merge a
+  named PR. That instruction is always his to initiate, and it is rare.
+
+## Comments
+
+**Omit comments.** Zero is the target; as few as possible is the rule. A
+comment earns its place only when the reason is not derivable from the code —
+a constraint, a workaround, a decision that looks wrong until you know why.
+Rationale, never restatement. Never narrate what a line does. Prefer a better
+name over a comment explaining a bad one, and prefer deleting a comment over
+shortening it.
+
 ## Workflow
 
 - Use `just` for local tasks (`just lint`, `just test`, `just ci`).
