@@ -5,6 +5,6 @@
 coverage = { branch = false }
 
 [[python.exempt]]
-path = "src/agent_transcript_viewer/__init__.py"
+path = "hatch_build.py"
 rules = ["colocated-test"]
-reason = "re-export barrel; the version it re-exports is tested in _version_test.py"
+reason = "hatchling build-backend plugin, loaded by path at build time and never importable from the package; its behaviour is covered end-to-end by tests/integration/viewer_asset_packaging_test.py, which builds the real wheel and sdist"

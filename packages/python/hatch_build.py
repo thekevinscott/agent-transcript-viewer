@@ -7,6 +7,13 @@ class ViewerAssetBuildHook(BuildHookInterface):
     PLUGIN_NAME = "viewer-asset"
 
     def initialize(self, version: str, build_data: dict) -> None:
+        if version == "editable":
+            # A dev install is not a distributable artifact, and requiring a
+            # Node build to run `pytest` would couple the unit tier to the
+            # frontend toolchain. `get_viewer_html()` raises until the asset
+            # is there, which is the honest state of such a checkout.
+            return
+
         dest = Path(
             self.root, "src", "agent_transcript_viewer", "_assets", "viewer.html"
         )

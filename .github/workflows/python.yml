@@ -1,9 +1,14 @@
 name: Python
 
+# The wheel bundles packages/node's built viewer.html (packages/python/hatch_build.py),
+# so every lane that builds a real distribution builds the frontend first. The
+# unit lane doesn't: the hook skips editable builds on purpose.
+
 on:
   pull_request:
     paths:
       - 'packages/python/**'
+      - 'packages/node/**'
       - '.github/workflows/python.yml'
 
 permissions:
@@ -24,8 +29,16 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v6
+      - uses: pnpm/action-setup@v5
+        with:
+          version: 10.33.0
+      - uses: actions/setup-node@v6
+        with:
+          node-version: 24
       - uses: astral-sh/setup-uv@v7
       - uses: extractions/setup-just@v3
+      - run: just node-install
+      - run: just node-build
       - run: just py-test-integration
 
   build:
@@ -40,10 +53,19 @@ jobs:
         with:
           # hatch-vcs derives the version from the tag; a shallow clone has none.
           fetch-depth: 0
+      - uses: pnpm/action-setup@v5
+        with:
+          version: 10.33.0
+      - uses: actions/setup-node@v6
+        with:
+          node-version: 24
       - uses: actions/setup-python@v6
         with:
           python-version: ${{ matrix.python-version }}
+      - uses: extractions/setup-just@v3
       - run: pip install uv
+      - run: just node-install
+      - run: just node-build
       - name: Build wheel
         run: uv build
         working-directory: packages/python
@@ -51,4 +73,4 @@ jobs:
         run: |
           python -m venv .venv
           .venv/bin/pip install packages/python/dist/*.whl
-          .venv/bin/python -c "import agent_transcript_viewer; print(agent_transcript_viewer.__version__)"
+          .venv/bin/python -c "import agent_transcript_viewer; print(agent_transcript_viewer.get_viewer_html()[:15])"

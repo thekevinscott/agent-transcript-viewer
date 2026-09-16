@@ -1,23 +1,31 @@
 """Tests for reading the bundled viewer.html artifact."""
 
+from unittest.mock import patch
+
 import pytest
 
-from agent_transcript_viewer import viewer_assets
+from agent_transcript_viewer.viewer_assets import get_viewer_html
 
 
-def test_get_viewer_html_returns_the_bundled_asset(monkeypatch, tmp_path):
-    assets_dir = tmp_path / "_assets"
-    assets_dir.mkdir()
-    (assets_dir / "viewer.html").write_text(
-        "<!doctype html><html></html>", encoding="utf-8"
+@pytest.fixture
+def files():
+    with patch("agent_transcript_viewer.viewer_assets.resources.files") as mock:
+        yield mock
+
+
+def test_returns_the_bundled_asset(files):
+    files.return_value.joinpath.return_value.read_text.return_value = (
+        "<!doctype html><html></html>"
     )
-    monkeypatch.setattr(viewer_assets.resources, "files", lambda _package: tmp_path)
 
-    assert viewer_assets.get_viewer_html() == "<!doctype html><html></html>"
+    assert get_viewer_html() == "<!doctype html><html></html>"
 
 
-def test_get_viewer_html_raises_when_the_asset_is_missing(monkeypatch, tmp_path):
-    monkeypatch.setattr(viewer_assets.resources, "files", lambda _package: tmp_path)
+def test_reads_utf8_from_the_assets_directory_of_its_own_package(files):
+    get_viewer_html()
 
-    with pytest.raises(FileNotFoundError):
-        viewer_assets.get_viewer_html()
+    files.assert_called_once_with("agent_transcript_viewer")
+    files.return_value.joinpath.assert_called_once_with("_assets", "viewer.html")
+    files.return_value.joinpath.return_value.read_text.assert_called_once_with(
+        encoding="utf-8"
+    )
