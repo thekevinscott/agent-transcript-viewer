@@ -267,6 +267,28 @@ concurrency:
 
 **Use `putitoutthere`.** Single reusable workflow, single config file, OIDC trusted publishing to PyPI. Versions derive from git tags via `hatch-vcs`. Provenance, retry-with-backoff, tag rollback, registry idempotency are all inside the workflow. Cross-cutting CHANGELOG / MIGRATIONS rules live in [../repo.md](../repo.md).
 
+### Version source
+
+`hatch-vcs` is not optional, and `dynamic = ["version"]` alone is not enough.
+putitoutthere never edits `pyproject.toml` at release time, so the backend has
+to derive the version itself. It supports three shapes and no others:
+
+| Backend | Version source | How the release version reaches the build |
+| --- | --- | --- |
+| `hatch-vcs` (use this) | `[tool.hatch.version] source = "vcs"` | `SETUPTOOLS_SCM_PRETEND_VERSION` |
+| `setuptools-scm` | `[tool.setuptools_scm]` | `SETUPTOOLS_SCM_PRETEND_VERSION` |
+| `maturin` | sibling `Cargo.toml` | putitoutthere rewrites the manifest pre-build |
+
+A fourth shape — hatchling's `[tool.hatch.version] path = "..."`, reading a
+literal out of a `_version.py` — passes putitoutthere's PR-time checks, because
+`dynamic` is declared and a `[tool.hatch.version]` block exists. Nothing rewrites
+that literal and plain hatchling ignores `SETUPTOOLS_SCM_PRETEND_VERSION`, so the
+wheel ships whatever is on disk. This repo shipped `0.0.0` to PyPI that way while
+the release plan said `0.1.0`.
+
+Anything reading the version at runtime reads it from installed distribution
+metadata, never from a literal — a literal is the same bug one layer up.
+
 ### `putitoutthere.toml`
 
 Repo-root config. Prescriptive schema — every package declares the same fields; defaults stay implicit.

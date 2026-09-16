@@ -19,6 +19,9 @@ jobs:
         python-version: ['3.10', '3.11', '3.12', '3.13']
     steps:
       - uses: actions/checkout@v6
+        with:
+          # hatch-vcs derives the version from the tag; a shallow clone has none.
+          fetch-depth: 0
       - uses: actions/setup-python@v6
         with:
           python-version: ${{ matrix.python-version }}
