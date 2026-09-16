@@ -1,11 +1,14 @@
 name: Testing Conventions
 
-# Enforce the testing-conventions standard on this repo's packages: every
-# source file must have a colocated unit test (Python `foo.py` -> `foo_test.py`;
-# TypeScript `foo.ts` -> `foo.test.ts`). Calls the upstream reusable workflow,
-# which installs the published `testing-conventions` binary from crates.io and
-# runs each rule as its own job, failing the build on any violation.
+# Enforce the testing-conventions standard on this repo's packages. Calls the
+# upstream reusable workflow, which installs the published `testing-conventions`
+# binary and runs each rule as its own job, failing the build on any violation.
 #   https://github.com/thekevinscott/testing-conventions
+#
+# No `gates:` input, deliberately: an empty `gates` runs every applicable rule.
+# Relax a rule with a `reason`-carrying exemption in the package's
+# testing-conventions.toml, which is scoped and hard-errors once it goes stale.
+# A `gates:` allowlist silently drops whole rules and never complains.
 #
 # Pinned to the upstream rolling `v0` tag (same convention as check.yml's
 # putitoutthere pin): v0 tracks the latest backwards-compatible release of the

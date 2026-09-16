@@ -56,10 +56,14 @@ shortening it.
 ## Workflow
 
 - Use `just` for local tasks (`just lint`, `just test`, `just ci`).
-- Unit tests are **colocated** with their source (`foo.py` ↔ `foo_test.py`,
-  `foo.ts` ↔ `foo.test.ts`). This is the
-  [testing-conventions](https://github.com/thekevinscott/testing-conventions)
-  standard, enforced in CI by `.github/workflows/conventions.yml`.
+- The [testing-conventions](https://github.com/thekevinscott/testing-conventions)
+  standard applies **in full**, run by `.github/workflows/conventions.yml`.
+  Colocated unit tests (`foo.py` ↔ `foo_test.py`, `foo.ts` ↔ `foo.test.ts`)
+  are its most visible rule, not its only one — coverage, diff-scoped
+  mutation, mocking hygiene, one-function-per-file, integration-test layout,
+  and packaging all gate too. See `ARCHITECTURE.md` for the set. To relax a
+  rule, add a `reason`-carrying exemption to that package's
+  `testing-conventions.toml`; never add a `gates:` allowlist to the workflow.
 - **Repo gates come from external tools, not from a local CI package.**
   putitoutthere, testing-conventions, and pr-monitor own them. A gate this repo
   seems to need for itself is a missing feature upstream — file it there rather
