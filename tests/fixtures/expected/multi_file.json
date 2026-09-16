@@ -1,0 +1,43 @@
+{
+  "records": [
+    {
+      "message": {
+        "content": "a1"
+      },
+      "type": "user"
+    },
+    {
+      "message": {
+        "content": "b1"
+      },
+      "type": "user"
+    },
+    {
+      "message": {
+        "content": "b2"
+      },
+      "type": "user"
+    },
+    {
+      "message": {
+        "content": "c1"
+      },
+      "type": "user"
+    }
+  ],
+  "summary": {
+    "metadata": {
+      "cwd": null,
+      "gitBranch": null,
+      "sessionId": null,
+      "version": null
+    },
+    "usage": {
+      "apiCalls": 0,
+      "totalCacheCreation": 0,
+      "totalCacheRead": 0,
+      "totalInput": 0,
+      "totalOutput": 0
+    }
+  }
+}

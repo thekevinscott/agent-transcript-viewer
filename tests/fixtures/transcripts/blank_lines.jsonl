@@ -1,0 +1,6 @@
+{"type":"system","subtype":"init","sessionId":"blank-1","cwd":"/workspace","gitBranch":"main","version":"2.1.0"}
+
+{"type":"queue-operation","operation":"enqueue","content":"first"}
+
+
+{"type":"assistant","message":{"id":"m1","usage":{"input_tokens":5,"output_tokens":7}}}

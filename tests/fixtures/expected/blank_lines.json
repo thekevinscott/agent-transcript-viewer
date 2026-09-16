@@ -1,0 +1,42 @@
+{
+  "records": [
+    {
+      "cwd": "/workspace",
+      "gitBranch": "main",
+      "sessionId": "blank-1",
+      "subtype": "init",
+      "type": "system",
+      "version": "2.1.0"
+    },
+    {
+      "content": "first",
+      "operation": "enqueue",
+      "type": "queue-operation"
+    },
+    {
+      "message": {
+        "id": "m1",
+        "usage": {
+          "input_tokens": 5,
+          "output_tokens": 7
+        }
+      },
+      "type": "assistant"
+    }
+  ],
+  "summary": {
+    "metadata": {
+      "cwd": "/workspace",
+      "gitBranch": "main",
+      "sessionId": "blank-1",
+      "version": "2.1.0"
+    },
+    "usage": {
+      "apiCalls": 1,
+      "totalCacheCreation": 0,
+      "totalCacheRead": 0,
+      "totalInput": 5,
+      "totalOutput": 7
+    }
+  }
+}

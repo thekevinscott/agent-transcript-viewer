@@ -1,0 +1,43 @@
+{
+  "records": [
+    {
+      "message": {
+        "content": "hi"
+      },
+      "type": "user"
+    },
+    {
+      "line": "not valid json at all",
+      "type": "raw"
+    },
+    {
+      "message": {
+        "id": "m2",
+        "usage": {
+          "input_tokens": 1,
+          "output_tokens": 2
+        }
+      },
+      "type": "assistant"
+    },
+    {
+      "line": "{unterminated",
+      "type": "raw"
+    }
+  ],
+  "summary": {
+    "metadata": {
+      "cwd": null,
+      "gitBranch": null,
+      "sessionId": null,
+      "version": null
+    },
+    "usage": {
+      "apiCalls": 1,
+      "totalCacheCreation": 0,
+      "totalCacheRead": 0,
+      "totalInput": 1,
+      "totalOutput": 2
+    }
+  }
+}
