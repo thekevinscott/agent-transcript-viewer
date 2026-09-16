@@ -55,7 +55,15 @@ shortening it.
 
 ## Workflow
 
-- Use `just` for local tasks (`just lint`, `just test`, `just ci`).
+- Use `just` for local tasks. Each package owns its justfile and you run it
+  from that package's root — `packages/python/justfile` is the Python one
+  (`just lint`, `just typecheck`, `just test_unit`). There is no repo-root
+  justfile; recipe names use underscores.
+- **Each test tier has its own recipe, and there is no aggregate.**
+  `test_unit` (colocated, `src/`), `test_integration` (`tests/integration`),
+  `test_e2e` (`tests/e2e`). Each has a `_watch` twin backed by
+  `pytest-watcher`. Naming a tier explicitly is the point — a bare `pytest`
+  collects only `src/`, per `testpaths` in `pyproject.toml`.
 - The [testing-conventions](https://github.com/thekevinscott/testing-conventions)
   standard applies **in full**, run by `.github/workflows/conventions.yml`.
   Colocated unit tests (`foo.py` ↔ `foo_test.py`, `foo.ts` ↔ `foo.test.ts`)
@@ -78,7 +86,8 @@ shortening it.
   `skip-changelog:` git trailer for genuinely internal refactors. Not gated in
   CI right now — testing-conventions owns this gate and has not exposed it to
   consumers yet (thekevinscott/testing-conventions#642).
-- Pre-commit hooks (`just hooks` to install) gate formatting, gitleaks, and per-language linters.
+- Pre-commit hooks (`pre-commit install --install-hooks` from the repo root)
+  gate formatting, gitleaks, and per-language linters.
 
 ## E2E
 

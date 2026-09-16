@@ -1,0 +1,37 @@
+set shell := ["bash", "-cu"]
+
+default:
+    @just --list
+
+lint:
+    uv run ruff check . && uv run ruff format --check .
+
+format:
+    uv run ruff check --fix . && uv run ruff format .
+
+typecheck:
+    uv run mypy src
+
+test_unit:
+    uv run pytest src
+
+test_unit_watch:
+    uv run ptw --now . src
+
+test_integration:
+    uv run pytest tests/integration
+
+test_integration_watch:
+    uv run ptw --now . tests/integration
+
+test_e2e:
+    uv run pytest tests/e2e
+
+test_e2e_watch:
+    uv run ptw --now . tests/e2e
+
+build:
+    uv build
+
+clean:
+    rm -rf dist
