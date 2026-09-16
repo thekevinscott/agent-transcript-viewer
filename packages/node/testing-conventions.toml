@@ -11,5 +11,5 @@ build_command = "pnpm build"
 [[typescript.exempt]]
 path = "index.ts"
 rules = ["mutation"]
-lines = [4]
+lines = [1]
 reason = "static mutant: a module-scope const is evaluated at import, so no per-test coverage can kill it"
