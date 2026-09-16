@@ -17,7 +17,8 @@ jobs:
       - uses: actions/checkout@v6
       - uses: astral-sh/setup-uv@v7
       - uses: extractions/setup-just@v3
-      - run: just py-test
+      - run: just test_unit
+        working-directory: packages/python
 
   test-integration:
     name: Integration
@@ -26,7 +27,8 @@ jobs:
       - uses: actions/checkout@v6
       - uses: astral-sh/setup-uv@v7
       - uses: extractions/setup-just@v3
-      - run: just py-test-integration
+      - run: just test_integration
+        working-directory: packages/python
 
   build:
     name: Build wheel + smoke

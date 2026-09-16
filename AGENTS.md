@@ -64,6 +64,12 @@ shortening it.
   `test_e2e` (`tests/e2e`). Each has a `_watch` twin backed by
   `pytest-watcher`. Naming a tier explicitly is the point — a bare `pytest`
   collects only `src/`, per `testpaths` in `pyproject.toml`.
+- **Every test lives inside a describe block.** Python uses `pytest-describe`
+  (`def describe_<subject>():` with `def test_<behavior>():` nested inside);
+  TypeScript uses Vitest's `describe()`. A bare top-level test function is not
+  acceptable, in any tier. Note the failure mode: without the `pytest-describe`
+  plugin installed, a `describe_` block collects **zero** tests and pytest
+  reports success — a missing plugin looks exactly like a passing suite.
 - The [testing-conventions](https://github.com/thekevinscott/testing-conventions)
   standard applies **in full**, run by `.github/workflows/conventions.yml`.
   Colocated unit tests (`foo.py` ↔ `foo_test.py`, `foo.ts` ↔ `foo.test.ts`)

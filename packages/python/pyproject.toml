@@ -46,6 +46,7 @@ dev = [
     "ruff>=0.8",
     "mypy>=1.13",
     "pytest-watcher>=0.6.3",
+    "pytest-describe>=3.2.0",
 ]
 
 [tool.pytest.ini_options]
