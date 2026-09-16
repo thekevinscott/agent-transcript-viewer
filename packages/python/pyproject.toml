@@ -47,6 +47,7 @@ dev = [
     "mypy>=1.13",
     "pytest-watcher>=0.6.3",
     "pytest-describe>=3.2.0",
+    "pytest-mock>=3.15.1",
 ]
 
 [tool.ruff.lint]
