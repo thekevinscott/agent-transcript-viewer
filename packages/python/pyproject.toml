@@ -49,6 +49,11 @@ dev = [
     "pytest-describe>=3.2.0",
 ]
 
+[tool.ruff.lint]
+# One public callable per file, named to match the file. For a class that
+# means the module is PascalCase, which N999 reads as invalid.
+ignore = ["N999"]
+
 [tool.pytest.ini_options]
 # Scoped to src/ only: integration and e2e are separate tiers, invoked with
 # an explicit path (tests/integration, tests/e2e) that overrides testpaths.
