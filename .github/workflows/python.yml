@@ -10,6 +10,24 @@ permissions:
   contents: read
 
 jobs:
+  test:
+    name: Unit
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v6
+      - uses: astral-sh/setup-uv@v7
+      - uses: extractions/setup-just@v3
+      - run: just py-test
+
+  test-integration:
+    name: Integration
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v6
+      - uses: astral-sh/setup-uv@v7
+      - uses: extractions/setup-just@v3
+      - run: just py-test-integration
+
   build:
     name: Build wheel + smoke
     runs-on: ubuntu-latest

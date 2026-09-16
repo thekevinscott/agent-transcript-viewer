@@ -40,5 +40,8 @@ exclude = ["*_test.py", "conftest.py"]
 dev = ["pytest>=8", "ruff>=0.8", "mypy>=1.13"]
 
 [tool.pytest.ini_options]
-testpaths = ["src", "tests"]
+# Scoped to src/ only: integration and e2e are separate tiers, invoked with
+# an explicit path (tests/integration, tests/e2e) that overrides testpaths.
+# A bare `pytest` — the unit tier — must not also collect the other tiers.
+testpaths = ["src"]
 pythonpath = ["src"]

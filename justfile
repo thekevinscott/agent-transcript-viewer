@@ -17,6 +17,9 @@ py-typecheck:
 py-test:
     cd packages/python && uv run pytest
 
+py-test-integration:
+    cd packages/python && uv run pytest tests/integration
+
 py-build:
     cd packages/python && uv build
 
@@ -53,7 +56,7 @@ docs-build:
 lint: py-lint node-lint
 format: py-format
 typecheck: py-typecheck node-typecheck
-test: py-test node-test
+test: py-test py-test-integration node-test
 build: py-build node-build
 
 ci: lint typecheck test
