@@ -7,6 +7,7 @@ the CLI is a thin wrapper and gets its own coverage in the e2e tier.
 import agent_transcript_viewer
 
 
-def test_sdk_exposes_a_nonempty_version_string():
-    assert isinstance(agent_transcript_viewer.__version__, str)
-    assert agent_transcript_viewer.__version__
+def describe_sdk():
+    def test_it_exposes_a_nonempty_version_string():
+        assert isinstance(agent_transcript_viewer.__version__, str)
+        assert agent_transcript_viewer.__version__

@@ -17,6 +17,10 @@ classifiers = [
     "Topic :: Software Development",
 ]
 dynamic = ["version"]
+dependencies = [
+    "pytest>=9.1.1",
+    "pytest-watcher>=0.6.3",
+]
 
 [project.urls]
 Repository = "https://github.com/thekevinscott/agent-transcript-viewer"
@@ -37,7 +41,19 @@ exclude = ["*_test.py", "conftest.py"]
 exclude = ["*_test.py", "conftest.py"]
 
 [dependency-groups]
-dev = ["pytest>=8", "ruff>=0.8", "mypy>=1.13"]
+dev = [
+    "pytest>=8",
+    "ruff>=0.8",
+    "mypy>=1.13",
+    "pytest-watcher>=0.6.3",
+    "pytest-describe>=3.2.0",
+    "pytest-mock>=3.15.1",
+]
+
+[tool.ruff.lint]
+# One public callable per file, named to match the file. For a class that
+# means the module is PascalCase, which N999 reads as invalid.
+ignore = ["N999"]
 
 [tool.pytest.ini_options]
 # Scoped to src/ only: integration and e2e are separate tiers, invoked with
