@@ -10,8 +10,23 @@ import subprocess
 import zipfile
 from pathlib import Path
 
+import pytest
+
 PACKAGE_ROOT = Path(__file__).resolve().parents[2]
 ARTIFACT_PATH = "agent_transcript_viewer/_assets/viewer.html"
+VIEWER_SOURCES = (
+    PACKAGE_ROOT.parent / "node" / "dist" / "viewer.html",
+    PACKAGE_ROOT / "src" / ARTIFACT_PATH,
+)
+
+# `unit coverage` runs pytest over the whole package root, integration tier
+# included (thekevinscott/testing-conventions#643), and that lane has no Node
+# toolchain. The Integration job builds the frontend first, so the skip only
+# ever fires where the build genuinely cannot run.
+pytestmark = pytest.mark.skipif(
+    not any(source.is_file() for source in VIEWER_SOURCES),
+    reason="packages/node/dist/viewer.html is not built; run `just node-build`",
+)
 
 
 def _build(tmp_path: Path) -> None:
