@@ -19,5 +19,4 @@ releases, `just` for contributor commands.
 
 - `just lint typecheck test build` — run the full local gate suite.
 - [ARCHITECTURE.md](ARCHITECTURE.md) — package layout and release flow.
-- [ROADMAP.md](ROADMAP.md) — where the project is headed.
 - `docs/internals/` — contributor/agent conventions (not published).
