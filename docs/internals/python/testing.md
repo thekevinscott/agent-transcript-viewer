@@ -63,3 +63,22 @@ def mock_external_api(mocker):
 For mocking a streaming external service (LLM client, network stream), build a fixture that exposes `set_response`, `set_error`, `set_responses` so each test configures the mock declaratively.
 
 **Coverage** with `pytest-cov`, `branch=true`, `fail_under` set per project — 85 is a reasonable floor; aiming for 100 forces tests for trivia.
+
+## Test tiers
+
+Two tiers today, each independently runnable and each its own named CI step,
+per DESIGN's testing convention (issue #5). DESIGN's third tier, e2e, has
+nothing to drive until the CLI and the viewer build land, and it will not run
+in CI when it arrives — browser and process-boundary suites are a local and
+pre-release concern, not a per-PR gate.
+
+| Tier | Location | Command | Mocking |
+| --- | --- | --- | --- |
+| Unit | Colocated (`foo_test.py`) | `just py-test` | Isolate dependencies as needed |
+| Integration | `tests/integration/` | `just py-test-integration` | Targets the SDK exclusively; mock LLM calls once those exist |
+
+`testpaths` in `pyproject.toml` is scoped to `src` — a bare `pytest` (the
+unit tier) never picks up `tests/integration`; that tier runs by passing the
+directory explicitly, which overrides `testpaths`. `tests/` sits outside the
+wheel's packaged directory (`src/agent_transcript_viewer`), so no tier ships
+in the built package.
