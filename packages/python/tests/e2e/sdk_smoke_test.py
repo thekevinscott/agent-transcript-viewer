@@ -8,6 +8,7 @@ that the package imports and reports a version.
 import agent_transcript_viewer
 
 
-def test_package_imports_and_reports_a_version():
-    assert isinstance(agent_transcript_viewer.__version__, str)
-    assert agent_transcript_viewer.__version__
+def describe_package():
+    def test_it_imports_and_reports_a_version():
+        assert isinstance(agent_transcript_viewer.__version__, str)
+        assert agent_transcript_viewer.__version__
