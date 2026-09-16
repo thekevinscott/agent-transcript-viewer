@@ -14,6 +14,14 @@ describe('buildViewerHtml', () => {
     expect(html).not.toMatch(/src="https?:/);
   });
 
+  it('strips sourceMappingURL comments so devtools cannot request an external map', () => {
+    const html = buildViewerHtml(
+      "export const VIEWER_NAME = 'x';\n//# sourceMappingURL=index.js.map\n",
+    );
+
+    expect(html).not.toContain('sourceMappingURL');
+  });
+
   it('mounts the entry export to the DOM so the page is real, not a placeholder', () => {
     const html = buildViewerHtml("export const VIEWER_NAME = 'agent-transcript-viewer';");
 
