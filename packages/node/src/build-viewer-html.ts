@@ -1,7 +1,7 @@
 export function buildViewerHtml(entryJs: string): string {
   const inlineJs = entryJs
-    .replace(/^export\s+/gm, '')
-    .replace(/^\/\/# sourceMappingURL=.*$/gm, '')
+    .replace(/^export /gm, '')
+    .replace(/\/\/# sourceMappingURL=.*/gm, '')
     .trim();
 
   return `<!doctype html>
