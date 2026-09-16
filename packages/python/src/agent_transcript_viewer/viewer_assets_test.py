@@ -8,7 +8,9 @@ from agent_transcript_viewer import viewer_assets
 def test_get_viewer_html_returns_the_bundled_asset(monkeypatch, tmp_path):
     assets_dir = tmp_path / "_assets"
     assets_dir.mkdir()
-    (assets_dir / "viewer.html").write_text("<!doctype html><html></html>", encoding="utf-8")
+    (assets_dir / "viewer.html").write_text(
+        "<!doctype html><html></html>", encoding="utf-8"
+    )
     monkeypatch.setattr(viewer_assets.resources, "files", lambda _package: tmp_path)
 
     assert viewer_assets.get_viewer_html() == "<!doctype html><html></html>"
