@@ -36,10 +36,10 @@ export function summarizeTranscript(records: TranscriptRecord[]): TranscriptSumm
     } else if (type === 'assistant') {
       const message = (record.message as Record<string, unknown>) || {};
       const messageId = message.id as string | undefined;
-      if (messageId && seenMessageIds.has(messageId)) {
-        continue;
-      }
       if (messageId) {
+        if (seenMessageIds.has(messageId)) {
+          continue;
+        }
         seenMessageIds.add(messageId);
       }
       const messageUsage = (message.usage as Record<string, unknown>) || {};

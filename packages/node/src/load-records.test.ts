@@ -35,5 +35,6 @@ describe('loadRecords', () => {
 
     expect(loadRecords('dir')).toEqual([{ text: 'text of dir/a.jsonl' }, { text: 'text of dir/b.jsonl' }]);
     expect(listJsonlFiles).toHaveBeenCalledWith('dir');
+    expect(readFileSync).toHaveBeenCalledWith('dir/a.jsonl', 'utf-8');
   });
 });

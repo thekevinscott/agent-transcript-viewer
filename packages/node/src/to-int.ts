@@ -1,6 +1,3 @@
 export function toInt(value: unknown): number {
-  if (typeof value === 'number' && Number.isFinite(value)) {
-    return Math.trunc(value);
-  }
-  return 0;
+  return Number.isFinite(value) ? Math.trunc(value as number) : 0;
 }
