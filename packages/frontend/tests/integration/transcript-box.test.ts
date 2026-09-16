@@ -8,5 +8,7 @@ test.describe('the viewer page', () => {
     await expect(box).toBeVisible();
     await expect(box).toContainText('"type":"user"');
     await expect(box).toHaveCSS('background-color', 'rgb(0, 0, 0)');
+    await expect(box).toHaveCSS('color', 'rgb(255, 255, 255)');
+    await expect(box).toHaveCSS('white-space', 'pre-wrap');
   });
 });

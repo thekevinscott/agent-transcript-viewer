@@ -9,12 +9,12 @@ describe('TranscriptBox', () => {
     expect(screen.getByTestId('transcript-box')).toHaveTextContent('hello transcript');
   });
 
-  it('renders on a black background', () => {
+  it('carries the class the black-box styling hangs off', () => {
     render(<TranscriptBox text="x" />);
-    expect(screen.getByTestId('transcript-box')).toHaveStyle({ background: 'black' });
+    expect(screen.getByTestId('transcript-box')).toHaveClass('transcript-box');
   });
 
-  it('preserves whitespace so JSON lines stay on their own line', () => {
+  it('keeps the text verbatim, newlines included', () => {
     render(<TranscriptBox text={'a\nb'} />);
     expect(screen.getByTestId('transcript-box').textContent).toBe('a\nb');
   });

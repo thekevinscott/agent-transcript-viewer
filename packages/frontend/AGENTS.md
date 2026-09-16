@@ -17,6 +17,13 @@ Each tier has its own runner and its own config file. `vitest.config.ts`
 excludes `tests/`; `playwright.config.ts` sets `testDir: './tests'`. Neither
 runner may collect the other's files.
 
+`src/vitest.config.ts` re-exports the root `vitest.config.ts` and is not a
+second config. The testing-conventions coverage gate runs vitest with `src/` as
+its cwd while the mutation gate runs it from the package root, and vitest only
+reads the config sitting in its own cwd — so the settings have to be reachable
+from both. Keep the real settings in the root file and keep every path in it
+absolute or cwd-agnostic.
+
 **There is no e2e tier in this package, and none is to be added.** The repo-root
 `AGENTS.md` describes an e2e attestation model; it does not apply here. The
 frontend's outermost meaningful boundary is a browser loading the built page,
