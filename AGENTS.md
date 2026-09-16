@@ -80,6 +80,57 @@ shortening it.
   consumers yet (thekevinscott/testing-conventions#642).
 - Pre-commit hooks (`just hooks` to install) gate formatting, gitleaks, and per-language linters.
 
+## E2E
+
+**E2e never runs in CI, and you run it before every major change.** No runner
+executes the suite — it is slow, it needs real services, and a fixed amount of
+it on every push prices it out of the judgment-driven use it is for. What CI
+enforces instead is that a branch touching the code recorded one visible e2e
+decision. testing-conventions supplies the pair.
+
+**Before pushing a major change, attest.** From the package root, on the branch
+carrying the work:
+
+```sh
+testing-conventions e2e attest '<your e2e command>'
+```
+
+It streams your command's output, and on success writes and commits
+`e2e-attestations/<branch>.json` — the command, a timestamp, the exit code, and
+the commit it ran against. On failure it writes nothing and exits with your
+command's own exit code, so a red e2e run reads as red. **A receipt therefore
+only ever stands for a run that passed**; reaching one means fixing the failure
+and attesting again.
+
+**The command is yours to choose, and that choice is the judgment being
+recorded.** The full suite, the one suite covering the contract you touched, or
+a no-op for a change you judge needs no run — all are valid receipts. The point
+is that the question gets asked once, at the moment it applies, and the answer
+lands in the diff where review can see it.
+
+**`e2e verify` is the CI half.** It asks two content questions over
+`<base>...HEAD`: did this branch change the scoped source, and does its diff add
+or update a receipt? It never runs the suite and never reads the recorded
+command or exit code. Change the source without attesting and it fails, naming
+the fix.
+
+Practical consequences:
+
+- The receipt belongs to the **branch**, not its newest commit. More commits
+  after attesting leave the gate green. Re-run `attest` if you judge that later
+  work changed the picture; the receipt is overwritten in place.
+- Both questions are content questions, so a rebase, a force-push, or a squash
+  merge never disturbs a receipt.
+- Receipts from merged branches accumulate and are inert. Never delete another
+  branch's receipt — pairing a delete with your add makes git read the two as a
+  rename and collide.
+- A branch that touched none of the scoped source passes trivially.
+
+**Status in this repo: dormant.** There is no e2e suite yet and no receipts, so
+the `E2E attestation freshness` job reports as skipping. It arms itself the
+moment the first receipt is committed. Write the suite and attest before the
+first change that warrants one — don't wait to be told by a red check.
+
 ## First-publish prerequisites
 
 Before the first `Release` run on a fresh scaffold:
