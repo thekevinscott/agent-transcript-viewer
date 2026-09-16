@@ -42,6 +42,46 @@ wrapper + npm-published Node shim) and pruned to its actual shape:
   publish config. npm publishing machinery (`bootstrap-npm.yml`,
   per-platform sub-packages) is deleted.
 
+## Shared parsing (issue #4)
+
+Transcript parsing and normalization has exactly one implementation:
+`packages/node/src/load.ts`. Python never parses a transcript.
+
+**Decision.** Of the epic's three options, we took **option 1: parse in the
+browser; Python stays a byte pipe.** `load.ts` ports `design-snapshot`'s
+`load.py` semantics (blank lines skipped, malformed non-blank lines survive
+as `{type: "raw", line}`, directory input reads `*.jsonl` recursively in
+sorted order) plus the metadata and usage-totals extraction that
+`design-snapshot`'s `render.py._Header` performed — that extraction reads
+structure out of records rather than rendering HTML, so it travels with the
+parser, not the (not-yet-built) renderer. Option 2 (parse in Python) was
+rejected because the hosted GitHub Pages viewer has no Python and would need
+its own parser anyway, defeating the point. Option 3 (one TypeScript
+implementation invoked from both runtimes) was rejected because running it
+from Python needs Node at runtime, which the design brief forbids.
+
+**Consequences.**
+- Python cannot answer any question about a transcript's contents — record
+  counts, record types, session metadata — without a parser it does not
+  have. The 100,000-record limit from `DESIGN.md` is therefore enforced in
+  the browser, where the records exist, not in Python.
+- Python's only transcript-shaped responsibility is the browser's
+  byte-level input limit: validate the file decodes as UTF-8 and that the
+  decoded text is at most 50 MiB, then snapshot the bytes. It has no
+  record-type table, no JSON-lines splitter, and no metadata extractor.
+- Nothing gates this mechanically. A repo-local checker for it would be a
+  bespoke gate of exactly the kind the next section forbids, and no external
+  tool owns "this package must not reimplement that one". The rule is carried
+  by review: a `json.loads(`, `.jsonl`, `rglob(`, `splitlines(`,
+  `cache_creation_input_tokens`, or `TYPE_META` appearing under
+  `packages/python/src` is a second parser regrowing.
+- The shared fixture corpus lives at `tests/fixtures/` (`transcripts/` for
+  input files, `expected/` for golden output captured from
+  `design-snapshot`'s reference implementation). Both language suites read
+  from this one location: `packages/node/src/load.test.ts` parses it and
+  compares to the golden output; `packages/python/.../shared_fixtures_test.py`
+  checks the byte-level properties Python is actually responsible for.
+
 ## Repo gates come from external tools
 
 This repo runs no gate code of its own. putitoutthere validates the release
