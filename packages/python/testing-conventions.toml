@@ -6,5 +6,5 @@ coverage = { branch = false }
 
 [[python.exempt]]
 path = "src/agent_transcript_viewer/__init__.py"
-rules = ["colocated-test"]
-reason = "re-export barrel; the version it re-exports is tested in _version_test.py"
+rules = ["colocated-test", "co-change"]
+reason = "re-export barrel; every name it re-exports is tested in the module that defines it"
