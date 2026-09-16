@@ -36,7 +36,7 @@ wrapper + npm-published Node shim) and pruned to its actual shape:
   Python package builds with `hatchling`.
 - **One published package: PyPI.** `putitoutthere.toml` declares exactly
   one `[[package]]` (kind `pypi`, name `agent-transcript-viewer`).
-- **`packages/node` is internal tooling.** It builds the static viewer
+- **`packages/frontend` is internal tooling.** It builds the static viewer
   frontend whose output is bundled into the wheel; its `package.json` is
   `"private": true` and carries no `bin` / `optionalDependencies` /
   publish config. npm publishing machinery (`bootstrap-npm.yml`,

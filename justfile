@@ -23,22 +23,22 @@ py-test-integration:
 py-build:
     cd packages/python && uv build
 
-# ---- Node (internal frontend workspace — never published) ----------------
+# ---- Frontend (internal viewer workspace — never published) --------------
 
-node-install:
-    cd packages/node && pnpm install --no-frozen-lockfile
+frontend-install:
+    cd packages/frontend && pnpm install --no-frozen-lockfile
 
-node-lint:
-    cd packages/node && pnpm run lint
+frontend-lint:
+    cd packages/frontend && pnpm run lint
 
-node-typecheck:
-    cd packages/node && pnpm run typecheck
+frontend-typecheck:
+    cd packages/frontend && pnpm run typecheck
 
-node-test:
-    cd packages/node && pnpm run test
+frontend-test:
+    cd packages/frontend && pnpm run test
 
-node-build:
-    cd packages/node && pnpm run build
+frontend-build:
+    cd packages/frontend && pnpm run build
 
 # ---- Docs ----------------------------------------------------------------
 
@@ -53,11 +53,11 @@ docs-build:
 
 # ---- Aggregates ----------------------------------------------------------
 
-lint: py-lint node-lint
+lint: py-lint frontend-lint
 format: py-format
-typecheck: py-typecheck node-typecheck
-test: py-test py-test-integration node-test
-build: py-build node-build
+typecheck: py-typecheck frontend-typecheck
+test: py-test py-test-integration frontend-test
+build: py-build frontend-build
 
 ci: lint typecheck test
 
@@ -65,4 +65,4 @@ hooks:
     pre-commit install --install-hooks
 
 clean:
-    rm -rf packages/python/dist packages/node/dist docs/.vitepress/dist
+    rm -rf packages/python/dist packages/frontend/dist docs/.vitepress/dist
