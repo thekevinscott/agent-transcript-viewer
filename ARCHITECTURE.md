@@ -31,7 +31,18 @@ context so Trusted Publishing claims line up (see the comments in that file).
 ## CI gates
 
 - Per-language workflows (`python.yml`, `node.yml`) run lint + typecheck + test + build with path filters.
-- `conventions.yml` enforces the colocated-test standard on both packages.
+- `conventions.yml` runs the
+  [testing-conventions](https://github.com/thekevinscott/testing-conventions)
+  standard on both packages, once per language. It names no `gates:`, which
+  means the full default set: colocated tests and their co-change rule,
+  one-function-per-file, unit-test mocking hygiene, integration-test layout,
+  whole-tree and changed-line coverage, diff-scoped mutation, and packaging
+  (no test files in the built artifact). `e2e verify` is wired but inert —
+  it wants committed receipts under `e2e-attestations/` and there are none,
+  because e2e does not run in CI. Narrow a rule through a `reason`-carrying
+  exemption in `packages/<pkg>/testing-conventions.toml`, never by adding a
+  `gates:` allowlist: an exemption is scoped and goes stale loudly, an
+  allowlist is silent forever.
 - `check.yml` / `build-check.yml` validate `putitoutthere.toml` and the release build on every PR.
 - `docs.yml` builds + deploys the VitePress site.
 - `pr-monitor.yml` gates merge on the aggregate CI status.

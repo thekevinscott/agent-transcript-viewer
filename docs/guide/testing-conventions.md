@@ -4,14 +4,17 @@ diataxis: how-to
 
 # Testing conventions
 
-> **Why read this:** every PR is gated on this rule — learn what it asks for
-> (a colocated unit test per source file) and how to pass the check locally
-> before CI runs it.
+> **Why read this:** the colocated-test rule is the one you meet first and
+> trip over most — learn what it asks for and how to pass it locally before
+> CI runs it.
 
 This repo follows the [testing-conventions](https://github.com/thekevinscott/testing-conventions)
-standard and enforces it in CI.
+standard **in full** and enforces it on every PR: coverage, diff-scoped
+mutation, mocking hygiene, one-function-per-file, integration-test layout,
+and packaging all gate alongside the rule below. `ARCHITECTURE.md` lists the
+set. This page covers the colocated rule only.
 
-## The rule
+## The colocated rule
 
 Every source file has a **colocated** unit test named after it:
 
@@ -19,20 +22,23 @@ Every source file has a **colocated** unit test named after it:
 | ---------- | ------------- | ------------------ |
 | Python     | `foo.py`      | `foo_test.py`      |
 | TypeScript | `foo.ts`      | `foo.test.ts`      |
-| Rust       | `foo.rs`      | inline `#[cfg(test)] mod tests` |
 
 Move the source, the test moves with it. (Python's `__init__.py` and TypeScript
-declaration files `*.d.ts` are exempt; Rust uses inline tests, so the
-colocated-file rule does not apply to it.)
+declaration files `*.d.ts` are exempt.)
 
 ## How it's enforced
 
 `.github/workflows/conventions.yml` calls the upstream reusable workflow on every
-pull request. It installs the published `testing-conventions` binary from
-crates.io and runs the location check per language, failing the build — with the
+pull request, once per language. It names no `gates:`, so every applicable rule
+runs; the location check is one job among them, failing the build — with the
 offending files in the log — on any source file missing its colocated test.
 
-Run the same check locally:
+To relax a rule, add an exemption with a `reason` to that package's
+`testing-conventions.toml`. Never narrow the workflow with a `gates:`
+allowlist: an exemption is scoped and hard-errors once it stops applying, an
+allowlist drops a whole rule and stays quiet about it.
+
+Run the location check locally:
 
 ```sh
 cargo install testing-conventions
