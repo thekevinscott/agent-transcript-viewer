@@ -40,7 +40,9 @@ def test_wheel_contains_the_viewer_asset(tmp_path):
     assert len(wheels) == 1, wheels
 
     names = _names(wheels[0])
-    assert ARTIFACT_PATH in names, f"{ARTIFACT_PATH} missing from wheel contents: {names}"
+    assert ARTIFACT_PATH in names, (
+        f"{ARTIFACT_PATH} missing from wheel contents: {names}"
+    )
 
 
 def test_sdist_contains_the_viewer_asset(tmp_path):
@@ -68,12 +70,15 @@ def test_installed_wheel_reads_viewer_html_via_importlib_resources(tmp_path):
             str(wheels[0]),
             "python",
             "-c",
-            "import agent_transcript_viewer as v; html = v.get_viewer_html(); "
-            "assert html.strip().startswith('<!doctype html>'), html[:80]; print('ok')",
+            (
+                "import agent_transcript_viewer as v; html = v.get_viewer_html(); "
+                "assert html.strip().startswith('<!doctype html>'), html[:80]; print('ok')"
+            ),
         ],
         cwd=tmp_path,
         capture_output=True,
         text=True,
+        check=False,
     )
     assert result.returncode == 0, result.stderr
     assert result.stdout.strip() == "ok"

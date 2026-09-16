@@ -20,6 +20,10 @@ __pycache__/
 .venv/
 build/
 
+# viewer.html copied in from packages/node/dist by the Python build hook
+# (packages/python/hatch_build.py) — never committed, only built.
+packages/python/src/agent_transcript_viewer/_assets/
+
 # Dolt database files (added by bd init)
 .dolt/
 *.db

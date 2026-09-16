@@ -28,13 +28,20 @@ source = "vcs"
 # Tagless checkouts still resolve to a usable dev version.
 fallback_version = "0.0.0"
 
+[tool.hatch.build.hooks.custom]
+path = "hatch_build.py"
+
 [tool.hatch.build.targets.wheel]
 packages = ["src/agent_transcript_viewer"]
 # Unit tests are colocated with their source, so the build has to drop them.
 exclude = ["*_test.py", "conftest.py"]
+# viewer.html is gitignored and written by the build hook above, so it needs
+# an explicit artifact entry to survive hatchling's VCS-ignore filtering.
+artifacts = ["src/agent_transcript_viewer/_assets/viewer.html"]
 
 [tool.hatch.build.targets.sdist]
 exclude = ["*_test.py", "conftest.py"]
+artifacts = ["src/agent_transcript_viewer/_assets/viewer.html"]
 
 [dependency-groups]
 dev = ["pytest>=8", "ruff>=0.8", "mypy>=1.13"]
