@@ -40,6 +40,7 @@ jobs:
     needs: release
     if: ${{ !cancelled() && needs.release.outputs.pypi_pending == 'true' }}
     runs-on: ubuntu-latest
+    environment: release
     permissions:
       id-token: write
     steps:
