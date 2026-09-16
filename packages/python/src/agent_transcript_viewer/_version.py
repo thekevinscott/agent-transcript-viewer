@@ -1,3 +1,10 @@
-"""Single source of truth for the package version."""
+"""The installed distribution's version. The git tag is the source of truth."""
 
-__version__ = "0.0.0"
+from __future__ import annotations
+
+from importlib.metadata import PackageNotFoundError, version
+
+try:
+    __version__ = version("agent-transcript-viewer")
+except PackageNotFoundError:  # running from a source tree that was never installed
+    __version__ = "0.0.0"
