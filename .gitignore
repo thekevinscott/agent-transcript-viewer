@@ -35,3 +35,7 @@ docs/node_modules/
 stryker-setup-*.js
 
 .worktrees
+
+# Playwright
+packages/frontend/test-results/
+packages/frontend/playwright-report/
