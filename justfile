@@ -37,6 +37,9 @@ node-typecheck:
 node-test:
     cd packages/node && pnpm run test
 
+node-test-integration:
+    cd packages/node && pnpm run test:integration
+
 node-build:
     cd packages/node && pnpm run build
 
@@ -56,7 +59,7 @@ docs-build:
 lint: py-lint node-lint
 format: py-format
 typecheck: py-typecheck node-typecheck
-test: py-test py-test-integration node-test
+test: py-test py-test-integration node-test node-test-integration
 build: py-build node-build
 
 ci: lint typecheck test

@@ -1,4 +1,4 @@
-import { defineConfig } from 'vitest/config';
+import { configDefaults, defineConfig } from 'vitest/config';
 
 // Lives at the package root (not under src/) so the testing-conventions
 // location check — which scans src/ — never treats it as an untested source
@@ -11,6 +11,7 @@ import { defineConfig } from 'vitest/config';
 export default defineConfig({
   test: {
     include: ['**/*.test.ts'],
+    exclude: [...configDefaults.exclude, '**/tests/integration/**'],
     coverage: {
       provider: 'v8',
       include: ['**/*.ts'],

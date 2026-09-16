@@ -44,11 +44,13 @@ wrapper + npm-published Node shim) and pruned to its actual shape:
 
 ## Shared parsing (issue #4)
 
-Transcript parsing and normalization has exactly one implementation:
-`packages/node/src/load.ts`. Python never parses a transcript.
+Transcript parsing and normalization has exactly one implementation: the
+modules under `packages/node/src` that `index.ts` re-exports
+(`parse-transcript-text.ts`, `load-records.ts`, `list-jsonl-files.ts`,
+`summarize-transcript.ts`, `to-int.ts`). Python never parses a transcript.
 
 **Decision.** Of the epic's three options, we took **option 1: parse in the
-browser; Python stays a byte pipe.** `load.ts` ports `design-snapshot`'s
+browser; Python stays a byte pipe.** They port `design-snapshot`'s
 `load.py` semantics (blank lines skipped, malformed non-blank lines survive
 as `{type: "raw", line}`, directory input reads `*.jsonl` recursively in
 sorted order) plus the metadata and usage-totals extraction that
@@ -78,7 +80,8 @@ from Python needs Node at runtime, which the design brief forbids.
 - The shared fixture corpus lives at `tests/fixtures/` (`transcripts/` for
   input files, `expected/` for golden output captured from
   `design-snapshot`'s reference implementation). Both language suites read
-  from this one location: `packages/node/src/load.test.ts` parses it and
+  from this one location:
+  `packages/node/tests/integration/fixture-corpus-parity.test.ts` parses it and
   compares to the golden output; `packages/python/.../shared_fixtures_test.py`
   checks the byte-level properties Python is actually responsible for.
 

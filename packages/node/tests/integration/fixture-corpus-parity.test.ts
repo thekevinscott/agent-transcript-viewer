@@ -4,10 +4,11 @@ import { fileURLToPath } from 'node:url';
 
 import { describe, expect, it } from 'vitest';
 
-import { loadRecords, summarizeTranscript } from './load';
+import { loadRecords } from '../../src/load-records';
+import { summarizeTranscript } from '../../src/summarize-transcript';
 
 const here = dirname(fileURLToPath(import.meta.url));
-const fixturesRoot = join(here, '..', '..', '..', 'tests', 'fixtures');
+const fixturesRoot = join(here, '..', '..', '..', '..', 'tests', 'fixtures');
 const transcripts = join(fixturesRoot, 'transcripts');
 const expected = join(fixturesRoot, 'expected');
 
@@ -24,20 +25,22 @@ describe.each([
   it('produces identical records, metadata, and usage totals', () => {
     const golden = loadExpected(name);
     const records = loadRecords(join(transcripts, fixtureRelPath));
-    const summary = summarizeTranscript(records);
+
     expect(records).toEqual(golden.records);
-    expect(summary).toEqual(golden.summary);
+    expect(summarizeTranscript(records)).toEqual(golden.summary);
   });
 });
 
-describe('loadRecords', () => {
+describe('loadRecords over the shared corpus', () => {
   it('skips blank lines and keeps malformed lines as raw records', () => {
     const records = loadRecords(join(transcripts, 'malformed_lines.jsonl'));
-    expect(records.map((r) => (r as { type: string }).type)).toEqual(['user', 'raw', 'assistant', 'raw']);
+
+    expect(records.map((r) => r.type)).toEqual(['user', 'raw', 'assistant', 'raw']);
   });
 
   it('reads every .jsonl file under a directory, recursively, sorted', () => {
     const records = loadRecords(join(transcripts, 'multi_file')) as { message: { content: string } }[];
+
     expect(records.map((r) => r.message.content)).toEqual(['a1', 'b1', 'b2', 'c1']);
   });
 });

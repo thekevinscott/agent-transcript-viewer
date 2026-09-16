@@ -1,7 +1,5 @@
-import { readdirSync, readFileSync, statSync } from 'node:fs';
-import { join } from 'node:path';
-
-export type TranscriptRecord = Record<string, unknown>;
+import { type TranscriptRecord } from './parse-transcript-text';
+import { toInt } from './to-int';
 
 export interface TranscriptMetadata {
   sessionId: string | null;
@@ -21,52 +19,6 @@ export interface UsageTotals {
 export interface TranscriptSummary {
   metadata: TranscriptMetadata;
   usage: UsageTotals;
-}
-
-function splitLines(text: string): string[] {
-  return text.split(/\r\n|\r|\n/);
-}
-
-export function parseTranscriptText(text: string): TranscriptRecord[] {
-  const records: TranscriptRecord[] = [];
-  for (const line of splitLines(text)) {
-    if (!line.trim()) {
-      continue;
-    }
-    try {
-      records.push(JSON.parse(line) as TranscriptRecord);
-    } catch {
-      records.push({ type: 'raw', line });
-    }
-  }
-  return records;
-}
-
-function listJsonlFiles(dir: string): string[] {
-  const out: string[] = [];
-  for (const entry of readdirSync(dir)) {
-    const full = join(dir, entry);
-    if (statSync(full).isDirectory()) {
-      out.push(...listJsonlFiles(full));
-    } else if (entry.endsWith('.jsonl')) {
-      out.push(full);
-    }
-  }
-  return out.sort();
-}
-
-export function loadRecords(path: string): TranscriptRecord[] {
-  if (statSync(path).isDirectory()) {
-    return listJsonlFiles(path).flatMap((file) => parseTranscriptText(readFileSync(file, 'utf-8')));
-  }
-  return parseTranscriptText(readFileSync(path, 'utf-8'));
-}
-
-function toInt(value: unknown): number {
-  if (typeof value === 'number' && Number.isFinite(value)) {
-    return Math.trunc(value);
-  }
-  return 0;
 }
 
 export function summarizeTranscript(records: TranscriptRecord[]): TranscriptSummary {
