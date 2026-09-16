@@ -48,27 +48,12 @@ docs-dev:
 docs-build:
     cd docs && pnpm run build
 
-# ---- CI gates (repo-internal `ci` package) --------------------------------
-
-# Gate: fail if any workflow / composite-action YAML encodes a non-trivial
-# inline script (docs/internals/repo.md). Run from the repo root.
-gha-lint:
-    uv run --project ci ci lint-workflow-scripts
-
-gha-test:
-    cd ci && uv run pytest
-
-# Gate: fail if template scaffolding survives (see
-# docs/internals/repo.md, "Repo shape"). Run from the repo root.
-repo-shape:
-    uv run --project ci python -m ci.repo_shape
-
 # ---- Aggregates ----------------------------------------------------------
 
-lint: py-lint node-lint gha-lint
+lint: py-lint node-lint
 format: py-format
 typecheck: py-typecheck node-typecheck
-test: py-test node-test gha-test
+test: py-test node-test
 build: py-build node-build
 
 ci: lint typecheck test

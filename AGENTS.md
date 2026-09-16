@@ -6,10 +6,19 @@ Conventions, supervision rules, and per-language style live under
 
 ## Where to read first
 
-- `docs/internals/repo.md` — cross-cutting rules (changelog/migration fragment philosophy, public-API surface, CI-logic-in-scripts).
+- `docs/internals/repo.md` — cross-cutting rules (changelog/migration fragment philosophy, public-API surface).
 - `docs/AGENTS.md` — how the docs site is organized ([Diataxis](https://diataxis.fr)) and the per-page quadrant rule.
 - `docs/internals/python/` — Python style, testing, shipping, review, setup.
 - `docs/internals/typescript/` — TypeScript style, testing, shipping, review, setup.
+
+## Layout
+
+- **`packages/`** holds public-facing packages — what gets published.
+- **`internals/`** holds internal-only packages — built and tested to the same
+  standard, never published.
+
+A package's directory states which it is. Don't rely on a `private: true` flag
+or a `Private :: Do Not Upload` classifier to carry that alone.
 
 ## Worktrees
 
@@ -51,21 +60,20 @@ shortening it.
   `foo.ts` ↔ `foo.test.ts`). This is the
   [testing-conventions](https://github.com/thekevinscott/testing-conventions)
   standard, enforced in CI by `.github/workflows/conventions.yml`.
-- **CI logic lives in scripts, not workflow YAML.** `run:` / `github-script`
-  steps stay trivial glue; anything with iteration, `case` dispatch, or
-  text-munging moves to a subcommand of the tested internal CLI at `ci/`
-  (never published), invoked as a one-liner. Enforced by
-  `.github/workflows/gha-scripts.yml`; the bright line and rationale are in
-  `docs/internals/repo.md`.
+- **Repo gates come from external tools, not from a local CI package.**
+  putitoutthere, testing-conventions, and pr-monitor own them. A gate this repo
+  seems to need for itself is a missing feature upstream — file it there rather
+  than writing a bespoke checker here.
 - Every PR that changes a public API adds a **changelog fragment**: one
   timestamped file under `docs/changelog.d/` (plus one under
   `docs/migrations.d/` for breaking changes), named `YYYY-MM-DD-<pkg>-<slug>.md`
   by UTC merge date. The folders are the permanent, append-only record;
   `packages/<pkg>/CHANGELOG.md` / `MIGRATIONS.md` are pointer stubs — never
   append entries to them. For version attribution ("which release shipped X"),
-  map fragment dates against tags via `git log --tags`. Enforced by
-  `.github/workflows/changelog.yml`. Bypass with a `skip-changelog:` git
-  trailer for genuinely internal refactors.
+  map fragment dates against tags via `git log --tags`. Bypass with a
+  `skip-changelog:` git trailer for genuinely internal refactors. Not gated in
+  CI right now — testing-conventions owns this gate and has not exposed it to
+  consumers yet (thekevinscott/testing-conventions#642).
 - Pre-commit hooks (`just hooks` to install) gate formatting, gitleaks, and per-language linters.
 
 ## First-publish prerequisites

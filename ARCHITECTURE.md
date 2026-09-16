@@ -12,7 +12,6 @@ packages/
   node/      internal frontend workspace (Vitest + tsc). Never published.
 docs/        VitePress site (published to GitHub Pages).
   internals/ contributor + agent conventions (not published).
-ci/          repo-internal CI gate CLI (uv-managed, never published).
 ```
 
 ## Offline packaging
@@ -34,8 +33,6 @@ context so Trusted Publishing claims line up (see the comments in that file).
 - Per-language workflows (`python.yml`, `node.yml`) run lint + typecheck + test + build with path filters.
 - `conventions.yml` enforces the colocated-test standard on both packages.
 - `check.yml` / `build-check.yml` validate `putitoutthere.toml` and the release build on every PR.
-- `changelog.yml` enforces a changelog fragment under `docs/changelog.d/` on PRs that touch package code.
-- `gha-scripts.yml` runs the repo-internal `ci` package's tests (workflow-YAML linter, changelog gate, repo-shape structural gate).
 - `docs.yml` builds + deploys the VitePress site.
 - `pr-monitor.yml` gates merge on the aggregate CI status.
 
