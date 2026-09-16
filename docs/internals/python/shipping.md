@@ -35,24 +35,24 @@ When the type hints carry the structure, the prose carries the rationale.
 
 **API reference via `mkdocs-material` + `mkdocstrings`** for new projects; `sphinx` + `sphinx-autodoc` is the mature alternative. Both render docstrings to HTML.
 
-**Exception hierarchy** — define a flat tree at `agent_transcript_viewer/errors.py`, re-export from `__init__.py`:
+**Exception hierarchy** — define a flat tree at `telelux/errors.py`, re-export from `__init__.py`:
 
 ```python
-# agent_transcript_viewer/errors.py
-class AgentTranscriptViewerError(Exception):
-    """Base exception for agent_transcript_viewer."""
+# telelux/errors.py
+class TeleluxError(Exception):
+    """Base exception for telelux."""
 
-class ValidationError(AgentTranscriptViewerError):
+class ValidationError(TeleluxError):
     """A user input failed schema validation."""
 
-class NotFoundError(AgentTranscriptViewerError):
+class NotFoundError(TeleluxError):
     """The requested resource does not exist."""
 ```
 
 ```python
-# agent_transcript_viewer/__init__.py
-from agent_transcript_viewer.errors import AgentTranscriptViewerError, ValidationError, NotFoundError
-__all__ = ["AgentTranscriptViewerError", "ValidationError", "NotFoundError", "__version__"]
+# telelux/__init__.py
+from telelux.errors import TeleluxError, ValidationError, NotFoundError
+__all__ = ["TeleluxError", "ValidationError", "NotFoundError", "__version__"]
 ```
 
 Give each failure mode its own exception variant. One variant per condition (lock-poison, init-failure, not-ready) keeps `except` clauses precise.
@@ -77,12 +77,12 @@ requires = ["hatchling"]
 build-backend = "hatchling.build"
 
 [project]
-name = "agent-transcript-viewer"
+name = "telelux"
 dynamic = ["version"]
 requires-python = ">=3.10"
 
 [project.scripts]
-agent-transcript-viewer = "agent_transcript_viewer.cli:main"
+telelux = "telelux.cli:main"
 ```
 
 ### Testing
@@ -95,7 +95,7 @@ import subprocess
 
 def it_renders_a_transcript(tmp_path):
     result = subprocess.run(
-        ["agent-transcript-viewer", "write", str(tmp_path / "t.jsonl")],
+        ["telelux", "write", str(tmp_path / "t.jsonl")],
         capture_output=True,
         text=True,
         check=True,
@@ -143,7 +143,7 @@ Enable rule groups deliberately. The set above is a reasonable starting point. `
 "tests/**/*.py" = ["PLR2004", "PLR0915", "C901"]
 ```
 
-**Type checker in CI** — `ty check agent_transcript_viewer/` or `mypy agent_transcript_viewer/` as a separate job. Type errors block merge.
+**Type checker in CI** — `ty check telelux/` or `mypy telelux/` as a separate job. Type errors block merge.
 
 **Security**: `bandit` is fine to run in CI. Tell it to skip `B101` (assert-used) for tests. Scope the per-file `# nosec B603,B607` annotations rather than blanket-skipping subprocess rules globally.
 
@@ -168,10 +168,10 @@ format-check:
     uv run ruff format --check .
 
 typecheck:
-    uv run ty check agent_transcript_viewer/
+    uv run ty check telelux/
 
 test-unit:
-    uv run pytest agent_transcript_viewer/ -x -q
+    uv run pytest telelux/ -x -q
 
 test-integration:
     uv run pytest tests/integration/ -x -q
@@ -180,7 +180,7 @@ test-e2e:
     uv run pytest tests/e2e/ -x -q
 
 test-cov:
-    uv run pytest --cov=agent_transcript_viewer --cov-report=term-missing --cov-fail-under=85
+    uv run pytest --cov=telelux --cov-report=term-missing --cov-fail-under=85
 
 ci:
     #!/usr/bin/env bash
@@ -220,7 +220,7 @@ just ci
 | `test.yml` | `uv run pytest` matrix on Python 3.12, 3.13 |
 | `lint.yml` | `uv run ruff check` + `ruff format --check` |
 | `typecheck.yml` | `uv run ty check` (or mypy) |
-| `security.yml` | `bandit -r agent_transcript_viewer` |
+| `security.yml` | `bandit -r telelux` |
 | `coverage.yml` | `pytest --cov --cov-fail-under=85` |
 | `docs.yml` | Build + deploy mkdocs/sphinx site |
 | `changelog-check.yml` | changelog fragment added under `docs/changelog.d/` (or `skip-changelog:` trailer) |
@@ -244,7 +244,7 @@ just ci
 on:
   push:
     paths:
-      - "agent_transcript_viewer/**"
+      - "telelux/**"
       - "tests/**"
       - "pyproject.toml"
       - "uv.lock"
@@ -298,10 +298,10 @@ Repo-root config. Prescriptive schema — every package declares the same fields
 version = 1
 
 [[package]]
-name       = "agent_transcript_viewer"
+name       = "telelux"
 kind       = "pypi"
 path       = "."
-globs      = ["agent_transcript_viewer/**/*.py", "pyproject.toml", "uv.lock"]
+globs      = ["telelux/**/*.py", "pyproject.toml", "uv.lock"]
 build      = "hatch"
 tag_format = "v{version}"
 ```

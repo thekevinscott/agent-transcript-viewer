@@ -1,6 +1,6 @@
-# Agent Transcript Viewer — Design Brief
+# Telelux — Design Brief
 
-Agent Transcript Viewer offers a static transcript viewer, a CLI, and an SDK.
+Telelux offers a static transcript viewer, a CLI, and an SDK.
 
 Keep the MVP minimal. Add configuration options only when an agreed use case
 requires them; cut speculative customization.
@@ -8,7 +8,7 @@ requires them; cut speculative customization.
 ## CLI
 
 ```bash
-uv run agent-transcript-viewer
+uv run telelux
 ```
 
 Starts a server for the transcript viewer. `--no-browser` avoids the auto-open behavior.
@@ -25,7 +25,7 @@ to stderr; reserve stdout for the requested HTML, URL, or output path so
 commands remain usable in pipelines. See [Click API](https://click.palletsprojects.com/en/stable/api/).
 
 ```bash
-uv run agent-transcript-viewer ./path/to/transcript
+uv run telelux ./path/to/transcript
 ```
 
 This will start a server showing the transcript-viewer tied to that transcript.
@@ -33,7 +33,7 @@ This will start a server showing the transcript-viewer tied to that transcript.
 CLI can also produce a baked-in HTML representation:
 
 ```bash
-uv run agent-transcript-viewer ./path/to/transcript --out ./output-path.html
+uv run telelux ./path/to/transcript --out ./output-path.html
 ```
 
 When the output file already exists, fail with an error by default and leave
@@ -43,7 +43,7 @@ exports; the CLI reports the failure on stderr with exit code `1`.
 CLI can also produce a compressed link to the canonical static hosted viewer:
 
 ```bash
-uv run agent-transcript-viewer ./path/to/transcript --url
+uv run telelux ./path/to/transcript --url
 > https://thekevinscott.github.io/agent-transcript-viewer#v=1&data=<encoded-payload>
 ```
 
@@ -57,16 +57,16 @@ illustrative until the canonical deployment is finalized.
 
 ## SDK
 
-Agent Transcript Viewer can be incorporated into an app. Use
-`AgentTranscriptViewer(transcript: str | Path | None = None)`. The optional
+Telelux can be incorporated into an app. Use
+`Telelux(transcript: str | Path | None = None)`. The optional
 `transcript` identifies a single file; directories are not supported. The
 constructor has no `title` option.
 
 ```python
-from agent_transcript_viewer import AgentTranscriptViewer
+from telelux import Telelux
 
 # transcript can be a string or pathlib.Path
-viewer = AgentTranscriptViewer(transcript='./path/to/transcript')
+viewer = Telelux(transcript='./path/to/transcript')
 viewer.transcript = './path/to/another-transcript' # replace the input file
 
 viewer.html # str: self-contained HTML with the transcript embedded
@@ -78,7 +78,7 @@ viewer.serve(host="127.0.0.1", port=8000) # optional server exposure via Uvicorn
 
 `viewer.transcript` is a readable, settable property accepting a file path or
 `None`. Assigning a path replaces the input; assigning `None` clears it.
-`AgentTranscriptViewer().serve()` starts the empty reusable viewer. The same
+`Telelux().serve()` starts the empty reusable viewer. The same
 `.serve()` method starts a viewer with a transcript when one is set; there is
 no separate `serve_viewer()` function.
 

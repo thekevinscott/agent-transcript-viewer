@@ -27,7 +27,7 @@ Use `T | None` not `Optional[T]`. Use `list[T]` not `List[T]`. Use `dict`, `tupl
 **Mark the package typed**:
 
 ```
-agent_transcript_viewer/
+telelux/
   py.typed         # empty file; tells type checkers the package has inline hints
 ```
 
@@ -35,8 +35,8 @@ Then `force-include` it in the wheel build (if hatchling needs hinting):
 
 ```toml
 [tool.hatch.build.targets.wheel]
-packages = ["agent_transcript_viewer"]
-include = ["agent_transcript_viewer/py.typed"]
+packages = ["telelux"]
+include = ["telelux/py.typed"]
 ```
 
 **dataclass for internal data, Pydantic at boundaries.**

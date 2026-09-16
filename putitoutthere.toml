@@ -6,9 +6,9 @@
 version = 1
 
 [[package]]
-name = "agent-transcript-viewer-pypi"
+name = "telelux-pypi"
 kind = "pypi"
-pypi = "agent-transcript-viewer"
+pypi = "telelux"
 path = "packages/python"
 build = "hatch"
 globs = ["packages/python/**", "LICENSE"]

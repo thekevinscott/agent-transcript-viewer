@@ -4,14 +4,14 @@ diataxis: tutorial
 
 # Getting Started
 
-Agent Transcript Viewer turns an agent transcript into a single interactive
+Telelux turns an agent transcript into a single interactive
 HTML file. Install the Python package, point it at a transcript, and open the
 result in any browser.
 
 ## Install
 
 ```sh
-pip install agent-transcript-viewer
+pip install telelux
 ```
 
 ## Your first view
@@ -20,9 +20,9 @@ pip install agent-transcript-viewer
 SDK lands (see the sdk epic). -->
 
 ```python
-from agent_transcript_viewer import AgentTranscriptViewer
+from telelux import Telelux
 
-viewer = AgentTranscriptViewer(transcript="path/to/transcript.jsonl")
+viewer = Telelux(transcript="path/to/transcript.jsonl")
 viewer.write("transcript.html")
 ```
 

@@ -2,7 +2,7 @@
 layout: home
 
 hero:
-  name: Agent Transcript Viewer
+  name: Telelux
   text: Self-contained HTML views of agent transcripts
   tagline: A Python SDK that turns a transcript into one static HTML file — save it, share it, serve it.
   actions:
