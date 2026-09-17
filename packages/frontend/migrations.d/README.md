@@ -1,8 +1,8 @@
 # Migration fragments
 
 One file per breaking change, added in the PR that makes it — this folder
-*is* the migration record. Filenames follow `YYYY-MM-DD-<slug>.md`
-(UTC merge date; conventions in [`../changelog.d/README.md`](../changelog.d/README.md)),
+*is* the migration record. Filenames follow `YYYY-MM-DD-<slug>.md` (UTC merge
+date; conventions in [`../changelog.d/README.md`](../changelog.d/README.md)),
 and fragments are never deleted or rewritten.
 
 Each fragment has five sections, in order:
