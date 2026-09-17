@@ -4,7 +4,7 @@
   "private": true,
   "description": "Internal frontend workspace for the telelux static HTML viewer. Never published; the built artifact ships inside the Python wheel.",
   "license": "MIT",
-  "repository": "https://github.com/thekevinscott/agent-transcript-viewer",
+  "repository": "https://github.com/thekevinscott/telelux",
   "type": "module",
   "files": [
     "dist"

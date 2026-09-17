@@ -44,7 +44,7 @@ CLI can also produce a compressed link to the canonical static hosted viewer:
 
 ```bash
 uv run telelux ./path/to/transcript --url
-> https://thekevinscott.github.io/agent-transcript-viewer#v=1&data=<encoded-payload>
+> https://thekevinscott.github.io/telelux#v=1&data=<encoded-payload>
 ```
 
 Generated links always target the canonical static hosted viewer over HTTPS;
@@ -151,8 +151,8 @@ never store transcript contents or fetch caches in that preference.
 
 1. **Local file:** Drop a transcript onto the page or select it with a file picker.
 2. **URL entry:** Paste a transcript URL into the page and load it.
-3. **Direct link:** Open a viewer URL that identifies a hosted transcript; the viewer fetches and displays it automatically without another input step. https://thekevinscott.github.io/agent-transcript-viewer#v=1&data=https://example.com/transcript.jsonl
-4. **Compressed link:** Open a viewer URL containing compressed transcript data; the viewer decompresses and displays it without fetching a transcript file. Provide a way to produce these shareable links. https://thekevinscott.github.io/agent-transcript-viewer#v=1&data=<encoded-payload>
+3. **Direct link:** Open a viewer URL that identifies a hosted transcript; the viewer fetches and displays it automatically without another input step. https://thekevinscott.github.io/telelux#v=1&data=https://example.com/transcript.jsonl
+4. **Compressed link:** Open a viewer URL containing compressed transcript data; the viewer decompresses and displays it without fetching a transcript file. Provide a way to produce these shareable links. https://thekevinscott.github.io/telelux#v=1&data=<encoded-payload>
 
 
 ## Architecture and deployment
