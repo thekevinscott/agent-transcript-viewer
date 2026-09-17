@@ -19,5 +19,5 @@ accumulate as the permanent record.
 
 Enforced by the repository's changelog check: a PR that changes non-test
 source under a package must add a fragment in that package's folder (here or
-in `../migrations.d/`). Bypass with a
-`skip-changelog:` git trailer for genuinely internal refactors.
+in `../migrations.d/`). Bypass with a `skip-changelog:` git trailer for
+genuinely internal refactors.
