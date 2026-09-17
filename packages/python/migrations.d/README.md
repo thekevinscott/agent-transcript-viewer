@@ -1,7 +1,7 @@
-# Migration fragments
+# Python migration fragments
 
-One file per breaking change, added in the PR that makes it — this folder
-*is* the migration record. Filenames follow `YYYY-MM-DD-<pkg>-<slug>.md`
+One file per breaking Python change, added in the PR that makes it — this folder
+*is* the migration record. Filenames follow `YYYY-MM-DD-<slug>.md`
 (UTC merge date; conventions in [`../changelog.d/README.md`](../changelog.d/README.md)),
 and fragments are never deleted or rewritten.
 

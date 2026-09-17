@@ -55,8 +55,8 @@ telelux/
   justfile
   putitoutthere.toml
   README.md
-  CHANGELOG.md             # pointer stub — the record is docs/changelog.d/ (see ../repo.md)
-  MIGRATIONS.md            # pointer stub — the record is docs/migrations.d/
+  CHANGELOG.md             # pointer stub — the record is changelog.d/ (see ../repo.md)
+  MIGRATIONS.md            # pointer stub — the record is migrations.d/
   LICENSE
 ```
 

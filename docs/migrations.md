@@ -4,13 +4,11 @@ diataxis: reference
 
 # Migrations
 
-Migration records live in
-[`docs/migrations.d/`](https://github.com/thekevinscott/agent-transcript-viewer/tree/main/docs/migrations.d)
-in the repository — one timestamped file per breaking change, named
-`YYYY-MM-DD-<pkg>-<slug>.md` (UTC merge date). Newest = highest sort order.
-The folder is the record: no rendered file is assembled from it.
+Migration records live in each package's `migrations.d/` folder — one
+timestamped file per breaking change, named `YYYY-MM-DD-<slug>.md` (UTC merge
+date). Newest = highest sort order. The folders are the record: no rendered
+file is assembled from them.
 
-Changelog entries live alongside in
-[`docs/changelog.d/`](https://github.com/thekevinscott/agent-transcript-viewer/tree/main/docs/changelog.d).
+Changelog entries live alongside in each package's `changelog.d/` folder.
 Published packages ship both folders where the packaging toolchain allows, so
 the installed copy carries a version-exact record.

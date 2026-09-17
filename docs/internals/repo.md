@@ -4,15 +4,15 @@ Cross-cutting rules that apply across all language packages. Language-specific g
 
 ## Changelog + migration fragments
 
-The changelog and migration record are **append-only fragment folders** at the repo root: `docs/changelog.d/` and `docs/migrations.d/`. The folders *are* the record — no rendered CHANGELOG is assembled at release time, nothing commits back to `main` per release, and fragments are never deleted, rewritten, or "flushed". One fragment per PR, added in that PR, keeps concurrent PRs structurally conflict-free (a shared changelog file makes every pair of in-flight PRs merge-conflict by construction). Both folders sit under `docs/` but are excluded from the docs site via VitePress `srcExclude`. The philosophy is global — every language package follows it.
+The changelog and migration record are **append-only fragment folders** inside each package: `packages/<pkg>/changelog.d/` and `packages/<pkg>/migrations.d/`. The folders *are* the record — no rendered CHANGELOG is assembled at release time, nothing commits back to `main` per release, and fragments are never deleted, rewritten, or "flushed". One fragment per PR, added in that PR, keeps concurrent PRs structurally conflict-free (a shared changelog file makes every pair of in-flight PRs merge-conflict by construction). The philosophy is global — every package follows it.
 
 Every PR that changes public API adds at least one fragment naming each touched package. Enforced in CI by [`changelog.yml`](../../.github/workflows/changelog.yml); a `skip-changelog:` trailer bypasses the check for genuinely internal refactors.
 
-**Filenames** — `YYYY-MM-DD-<pkg>-<slug>.md`, where the date is the UTC *merge* date, not the author date (authored timestamps interleave wrongly across long-lived branches). Plain `ls` sorts chronologically; newest = highest sort order. For version attribution ("which release shipped X"), map fragment dates against tags via `git log --tags --simplify-by-decoration --format='%cI %d'`.
+**Filenames** — `YYYY-MM-DD-<slug>.md`, where the date is the UTC *merge* date, not the author date (authored timestamps interleave wrongly across long-lived branches). Plain `ls` sorts chronologically; newest = highest sort order. For version attribution ("which release shipped X"), map fragment dates against tags via `git log --tags --simplify-by-decoration --format='%cI %d'`.
 
-**Changelog fragments** (`docs/changelog.d/`) — a few sentences per fragment. Lead with the Keep a Changelog category (`Added` / `Changed` / `Deprecated` / `Removed` / `Fixed`); breaking changes carry a `**BREAKING**` marker and link to their `migrations.d/` fragment.
+**Changelog fragments** (`packages/<pkg>/changelog.d/`) — a few sentences per fragment. Lead with the Keep a Changelog category (`Added` / `Changed` / `Deprecated` / `Removed` / `Fixed`); breaking changes carry a `**BREAKING**` marker and link to their sibling `migrations.d/` fragment.
 
-**Migration fragments** (`docs/migrations.d/`) — one per breaking change. Each has five sections, in order:
+**Migration fragments** (`packages/<pkg>/migrations.d/`) — one per breaking change. Each has five sections, in order:
 
 1. **Summary** — one paragraph: what changed and why.
 2. **Required changes** — before/after for config, CLI flags, function/method arguments, action inputs. "None" if purely additive.

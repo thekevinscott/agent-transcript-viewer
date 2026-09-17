@@ -51,5 +51,5 @@ context so Trusted Publishing claims line up (see the comments in that file).
 
 Defined in `docs/internals/repo.md`: every exported value/type, every CLI
 flag, every config key, every observable artifact. Changes to that surface
-require a fragment under `docs/changelog.d/` (plus `docs/migrations.d/` when
-breaking).
+require a fragment under `packages/<pkg>/changelog.d/` (plus the package's
+`migrations.d/` when breaking).
