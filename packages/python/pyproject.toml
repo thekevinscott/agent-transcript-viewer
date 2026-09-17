@@ -23,7 +23,7 @@ dependencies = [
 ]
 
 [project.urls]
-Repository = "https://github.com/thekevinscott/agent-transcript-viewer"
+Repository = "https://github.com/thekevinscott/telelux"
 
 [tool.hatch.version]
 source = "vcs"
