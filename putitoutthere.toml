@@ -11,4 +11,12 @@ kind = "pypi"
 pypi = "telelux"
 path = "packages/python"
 build = "hatch"
-globs = ["packages/python/**", "LICENSE"]
+# Keep bookkeeping paths out of release cascades. The root pattern covers
+# package files, while the subtree pattern excludes fragment and attestation
+# directories. A leading `!` is not a substitute: minimatch makes it match
+# everything outside the subtree, so it would cascade LICENSE on every commit.
+globs = [
+  "packages/python/!(testing-conventions.toml)",
+  "packages/python/!(changelog.d|migrations.d|e2e-attestations)/**",
+  "LICENSE",
+]

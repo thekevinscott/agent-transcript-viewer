@@ -83,9 +83,10 @@ shortening it.
   seems to need for itself is a missing feature upstream — file it there rather
   than writing a bespoke checker here.
 - Every PR that changes a public API adds a **changelog fragment**: one
-  timestamped file under `docs/changelog.d/` (plus one under
-  `docs/migrations.d/` for breaking changes), named `YYYY-MM-DD-<pkg>-<slug>.md`
-  by UTC merge date. The folders are the permanent, append-only record;
+  timestamped file under `packages/<pkg>/changelog.d/` (plus one under
+  `packages/<pkg>/migrations.d/` for breaking changes), named
+  `YYYY-MM-DD-<slug>.md` by UTC merge date. The folders are the permanent,
+  append-only record;
   `packages/<pkg>/CHANGELOG.md` / `MIGRATIONS.md` are pointer stubs — never
   append entries to them. For version attribution ("which release shipped X"),
   map fragment dates against tags via `git log --tags`. Bypass with a

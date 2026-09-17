@@ -223,7 +223,7 @@ just ci
 | `security.yml` | `bandit -r telelux` |
 | `coverage.yml` | `pytest --cov --cov-fail-under=85` |
 | `docs.yml` | Build + deploy mkdocs/sphinx site |
-| `changelog-check.yml` | changelog fragment added under `docs/changelog.d/` (or `skip-changelog:` trailer) |
+| `changelog-check.yml` | changelog fragment added under the package's `changelog.d/` (or `skip-changelog:` trailer) |
 | `release.yml` | `uses: thekevinscott/putitoutthere/.github/workflows/release.yml@v0` |
 
 **Use `astral-sh/setup-uv@v7`**, not `actions/setup-python`. uv installs and pins Python itself:

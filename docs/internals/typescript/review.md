@@ -25,7 +25,7 @@ If the agent didn't run these, ask. If they fail, the agent should fix before yo
 6. **`package.json` changes** — new deps match the ecosystem table in [setup.md](setup.md); `"files"` allowlist scoped to `dist` plus the staged `changelog.d`/`migrations.d` fragment folders.
 7. **Reuse over reinvention** — date math, deep clone, schema validation, retry-with-backoff all come from the ecosystem table.
 8. **Public API surface** — `default` vs named consistent; `@hidden` / `@internal` on the rest.
-9. **Changelog fragment** — a `docs/changelog.d/` fragment added (plus `docs/migrations.d/` when breaking) for any consumer-observable change, or a `skip-changelog:` trailer present. See [../repo.md](../repo.md).
+9. **Changelog fragment** — a package-local `changelog.d/` fragment added (plus `migrations.d/` when breaking) for any consumer-observable change, or a `skip-changelog:` trailer present. See [../repo.md](../repo.md).
 10. **`putitoutthere.toml`** — the Python package's `globs` still cover this workspace's build inputs where the built artifact feeds the wheel.
 
 ---
