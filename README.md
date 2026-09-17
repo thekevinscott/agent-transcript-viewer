@@ -1,9 +1,9 @@
-# Agent Transcript Viewer
+# Telelux
 
 Generate and share self-contained, interactive HTML views of agent transcripts.
 
 ```bash
-pip install agent-transcript-viewer
+pip install telelux
 ```
 
 The Python SDK is the product: point it at a transcript, get back a single

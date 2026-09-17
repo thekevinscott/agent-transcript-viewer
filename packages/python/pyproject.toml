@@ -3,7 +3,7 @@ requires = ["hatchling", "hatch-vcs"]
 build-backend = "hatchling.build"
 
 [project]
-name = "agent-transcript-viewer"
+name = "telelux"
 description = "Generate and share self-contained HTML views of agent transcripts"
 readme = "README.md"
 requires-python = ">=3.10"
@@ -33,7 +33,7 @@ source = "vcs"
 fallback_version = "0.0.0"
 
 [tool.hatch.build.targets.wheel]
-packages = ["src/agent_transcript_viewer"]
+packages = ["src/telelux"]
 # Unit tests are colocated with their source, so the build has to drop them.
 exclude = ["*_test.py", "conftest.py"]
 

@@ -11,7 +11,7 @@ exclude-newer = "2026-09-13T20:56:09.722820225Z"
 exclude-newer-span = "P3D"
 
 [[package]]
-name = "agent-transcript-viewer"
+name = "telelux"
 source = { editable = "." }
 dependencies = [
     { name = "pytest" },

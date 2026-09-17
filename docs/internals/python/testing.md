@@ -3,9 +3,9 @@
 **pytest, with `pytest-describe` for BDD-flavour grouping and `pytest-asyncio` for async.**
 
 ```python
-# agent_transcript_viewer/core_test.py
+# telelux/core_test.py
 import pytest
-from agent_transcript_viewer.core import process
+from telelux.core import process
 
 def describe_process():
     def describe_when_items_is_empty():
@@ -55,7 +55,7 @@ def tmp_dir(tmp_path: Path) -> Path:
 
 @pytest.fixture
 def mock_external_api(mocker):
-    api = mocker.patch("agent_transcript_viewer.external.fetch")
+    api = mocker.patch("telelux.external.fetch")
     api.return_value = {"status": "ok"}
     return api
 ```
@@ -80,5 +80,5 @@ pre-release concern, not a per-PR gate.
 `testpaths` in `pyproject.toml` is scoped to `src` — a bare `pytest` (the
 unit tier) never picks up `tests/integration`; that tier runs by passing the
 directory explicitly, which overrides `testpaths`. `tests/` sits outside the
-wheel's packaged directory (`src/agent_transcript_viewer`), so no tier ships
+wheel's packaged directory (`src/telelux`), so no tier ships
 in the built package.

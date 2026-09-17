@@ -3,7 +3,7 @@ from pathlib import Path
 from .load_data import load_data
 
 
-class AgentTranscriptViewer:
+class Telelux:
     __transcript__: str | Path | None = None
     __data__: str | None = None
 

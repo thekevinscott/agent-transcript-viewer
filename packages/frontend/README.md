@@ -1,4 +1,4 @@
-# agent-transcript-viewer frontend (internal)
+# telelux frontend (internal)
 
 Internal TypeScript workspace for the static HTML viewer. **Never published to
 npm** — the built viewer artifact is bundled into the Python wheel

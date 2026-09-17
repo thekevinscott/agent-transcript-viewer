@@ -36,8 +36,8 @@ Compose your own watcher from `pytest-watcher` (asyncio-aware) and a parallel `t
 Flat layout:
 
 ```
-agent_transcript_viewer/
-  agent_transcript_viewer/
+telelux/
+  telelux/
     __init__.py
     core.py
     core_test.py             # colocated unit test
@@ -63,21 +63,21 @@ agent_transcript_viewer/
 `__init__.py` should be **the thinnest possible** public-API surface. Re-export named items, set `__all__`, don't import heavy deps eagerly:
 
 ```python
-"""agent_transcript_viewer - one-line description."""
+"""telelux - one-line description."""
 
-from agent_transcript_viewer.errors import AgentTranscriptViewerError, ValidationError, NotFoundError
-from agent_transcript_viewer._version import __version__
+from telelux.errors import TeleluxError, ValidationError, NotFoundError
+from telelux._version import __version__
 
-__all__ = ["AgentTranscriptViewerError", "ValidationError", "NotFoundError", "__version__"]
+__all__ = ["TeleluxError", "ValidationError", "NotFoundError", "__version__"]
 ```
 
-For libraries that ship optional heavy subsystems (numpy, torch, etc.), use **PEP 562 lazy imports** to keep `import agent_transcript_viewer` cheap:
+For libraries that ship optional heavy subsystems (numpy, torch, etc.), use **PEP 562 lazy imports** to keep `import telelux` cheap:
 
 ```python
-# agent_transcript_viewer/__init__.py
+# telelux/__init__.py
 _LAZY: dict[str, str] = {
-    "evaluate": "agent_transcript_viewer.eval",
-    "tune": "agent_transcript_viewer.tune",
+    "evaluate": "telelux.eval",
+    "tune": "telelux.tune",
 }
 
 def __getattr__(name: str):
@@ -102,7 +102,7 @@ requires = ["hatchling>=1.20", "hatch-vcs>=0.4"]
 build-backend = "hatchling.build"
 
 [project]
-name = "agent_transcript_viewer"
+name = "telelux"
 dynamic = ["version"]
 description = "One-line description."
 readme = "README.md"
@@ -134,18 +134,18 @@ dev = [
 ]
 
 [project.scripts]
-agent_transcript_viewer = "agent_transcript_viewer.cli.main:main"
+telelux = "telelux.cli.main:main"
 
 [project.urls]
-Homepage = "https://github.com/org/agent_transcript_viewer"
-Documentation = "https://agent_transcript_viewer.dev"
-Issues = "https://github.com/org/agent_transcript_viewer/issues"
+Homepage = "https://github.com/org/telelux"
+Documentation = "https://telelux.dev"
+Issues = "https://github.com/org/telelux/issues"
 
 [tool.hatch.version]
 source = "vcs"
 
 [tool.hatch.build.targets.wheel]
-packages = ["agent_transcript_viewer"]
+packages = ["telelux"]
 
 [tool.ruff]
 line-length = 100
@@ -167,20 +167,20 @@ max-statements = 50
 "tests/**/*.py" = ["PLR2004", "PLR0915", "C901"]
 
 [tool.ruff.lint.isort]
-known-first-party = ["agent_transcript_viewer"]
+known-first-party = ["telelux"]
 
 [tool.ruff.format]
 quote-style = "double"
 
 [tool.pytest.ini_options]
-testpaths = ["agent_transcript_viewer", "tests"]
+testpaths = ["telelux", "tests"]
 python_files = ["*_test.py", "test_*.py"]
 asyncio_mode = "auto"
 asyncio_default_fixture_loop_scope = "function"
 
 [tool.coverage.run]
 branch = true
-source = ["agent_transcript_viewer"]
+source = ["telelux"]
 omit = ["*_test.py", "tests/*"]
 
 [tool.coverage.report]
@@ -215,11 +215,11 @@ Things worth getting right:
 For application-level config, the minimum:
 
 ```python
-# agent_transcript_viewer/config.py
+# telelux/config.py
 import os
 from pathlib import Path
 
-PROJECT_DIR = Path(os.environ.get("AGENT_TRANSCRIPT_VIEWER_DIR", str(Path.home() / ".agent_transcript_viewer")))
+PROJECT_DIR = Path(os.environ.get("TELELUX_DIR", str(Path.home() / ".telelux")))
 CACHE_DIR = PROJECT_DIR / "cache"
 ```
 

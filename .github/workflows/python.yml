@@ -53,4 +53,4 @@ jobs:
         run: |
           python -m venv .venv
           .venv/bin/pip install packages/python/dist/*.whl
-          .venv/bin/python -c "import agent_transcript_viewer; print(agent_transcript_viewer.__version__)"
+          .venv/bin/python -c "import telelux; print(telelux.__version__)"

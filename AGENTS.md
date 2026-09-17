@@ -158,7 +158,7 @@ Before the first `Release` run on a fresh scaffold:
    *pending publisher*: under
    `https://pypi.org/manage/account/publishing/`, register the repo,
    the `release.yml` workflow filename, and the project name
-   (`agent-transcript-viewer`) before the first release. No long-lived
+   (`telelux`) before the first release. No long-lived
    tokens are needed at any point — PyPI is the only registry.
 
 ## Out of scope

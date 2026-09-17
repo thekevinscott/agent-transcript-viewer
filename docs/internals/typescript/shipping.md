@@ -110,7 +110,7 @@ For test-friendly classes, expose dependencies via the constructor (factory inje
 **Per-package metadata under a namespaced key in `package.json`** is the load-bearing pattern:
 
 ```json
-"@agent_transcript_viewer": {
+"@telelux": {
   "title": "Pretty Display Name",
   "guide": { "frontmatter": { "category": "core" } }
 }
